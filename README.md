@@ -151,4 +151,6 @@ record.
 
 ## License
 
-MIT.
+Apache-2.0 (`LICENSE.txt`). Code-class repo — Lean axioms,
+predicate stubs, and the driver are reused under the standard
+Apache patent grant.
