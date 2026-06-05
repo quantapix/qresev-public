@@ -46,12 +46,17 @@ framework. The product surface streams the kernel's verdict.
 |---|---|---|---|
 | **Formal kernel** (`Accounting/<Framework>/*.lean`) | only Lean | only Lean | Lean elaborator. No I/O, no LLM calls. |
 | **Predicate functions** (`predicates/<framework>/*.md`) | one portfolio JSON + bar/indicator evidence | a single `Bool` (plus evidence + uncertainty) | LLM sub-agent with `context: fork`. |
-| **Driver** (`scripts/extract_facts.py`) | manifest + portfolio | the framework's generated axiom block + audit JSON | LLM invocations (Haiku by default). |
+| **Driver** (`scripts/extract_facts.py`) | manifest + portfolio | the framework's generated axiom block + audit JSON | LLM invocations, Opus only. |
 
 The Lean kernel never reads OHLCV bars, indicator series, parquet, or
 JSON. The predicate sub-agents never write Lean. The driver is a thin
 coordinator with no financial reasoning of its own. The verifiable
 proof IS the Lean elaboration trace produced by `lake build`.
+
+The driver runs every committed extraction on a frontier model (Opus); a
+bake-off showed weaker models fabricate numeric evidence while reporting it
+confidently, so a cheaper tier is refused for any retained run. An
+anti-poison guard rejects and retries evidence that carries no numbers.
 
 ### Frameworks
 
@@ -249,17 +254,39 @@ Lean.
 
 ## Axiomatize-trading program
 
-The five hand-built frameworks are the **golden reference** for a
-larger program: a kernel-checked encoding of trading signals across the
-whole S&P 500 universe, produced redundantly by independent agent teams
-along several orthogonal **signal-family** axes (Trend / Momentum /
-Volatility / Volume / CrossSection), then reconciled. Cross-axis
+The five hand-built frameworks are the **golden reference** for a larger
+program: a kernel-checked encoding of trading signals across the whole
+S&P 500 universe, produced redundantly by independent agent teams along
+several orthogonal **signal-family** axes, then reconciled. Cross-axis
 agreement, proved in the kernel via Bridge lemmas, is the correctness
-signal — and it coincides with the practitioner's **confluence**
-heuristic (independent indicator families agreeing). The slice unit is
-the `(GICS sector, axis)` cell. This mirrors the full-U.S.-Code program
-on the legal side ([`qnarre-public`](https://github.com/quantapix/qnarre-public));
-it is scaffolded and not yet at scale.
+signal — and it coincides with the practitioner's **confluence** heuristic
+(independent indicator families agreeing). The slice unit is the
+`(GICS sector, axis)` cell. This mirrors the full-U.S.-Code program on the
+legal side ([`qnarre-public`](https://github.com/quantapix/qnarre-public)).
+
+The GICS universe is fully enumerated (the full eleven-sector membership),
+and the early phases are built: the shared `Common` predicate skeleton, the
+categorization producer, the sandboxed driver, and the test harness all
+exist, and multi-sector reconciliation waves run end-to-end. The default
+run-set carries seven axes (five core signal families plus instrument-risk
+and tradability/liquidity). A structural invariant holds: a single-sector
+wave can never reach the top confluence tier, because only a subset of the
+axes are directional and the cross-section axis stays provisional until a
+cross-sector pass — so the top tier requires at least three independent
+directional axes agreeing.
+
+A sixth **Debate** framework formalizes the bull-vs-bear gate itself.
+`admissible_long` is a structure with no constructor omitting any field, so
+it requires the bull confluence claim, the kernel directional accept, a
+defined-risk-clean check, and the negation of *every* bear disqualifier.
+"Veto, not a vote" becomes a type-level property. The first kernel run of it
+correctly **refuse-closed** an inadmissible candidate (no `sorry`,
+`allowed = false`); an accepting run awaits a tape where at least three
+directional axes turn bullish at once.
+
+Scale-out to the full universe is gated on the programmatic-credit
+activation; the topology is proven, the current limiter is the tape, not the
+kernel.
 
 ## What this repo is not
 

@@ -1,6 +1,6 @@
 # qresev-public — status
 
-_Snapshot: 2026-06-01. Refreshed weekly (Fridays) during the
+_Snapshot: 2026-06-05. Refreshed weekly (Fridays) during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the financial-domain slice:
@@ -26,6 +26,13 @@ streaming verification UI are the launch deliverable.
   five frameworks across six judgments, with a mix of real-call and
   stubbed predicates, and a full audit trail (per-predicate Bool +
   evidence + uncertainty → generated axioms → kernel verdict).
+- **Golden suite re-derived on a frontier model** as trustworthy ground
+  truth, and real-call predicates now cover SECTOR / OPTIONS-RISK /
+  DRAWDOWN — the brand anchor proves a drawdown-discipline breach,
+  exercising the refuse path rather than only the accept path.
+- **Both kernels pinned to the current stable Lean release** (shared with
+  the legal-domain kernel), so the financial axiom set builds on one
+  toolchain.
 - **Defined-risk options enforced at the type level** via a closed
   strategy enum, in addition to the authoring-time and runtime gates.
 - **Results-propagation pipeline** emits a per-run report, a proof-DAG
@@ -66,16 +73,17 @@ Portfolios → chart + aggregate panels) and a backtest-summary surface.
 **Next:** migrate the cron routines to the programmatic SDK lane
 (gated on the 2026-06-15 credit activation); the kernel-formalized
 **Debate** framework that makes "veto, not a vote" a type-level
-property.
+property has had its first refuse-closing kernel run.
 
 ## Axiomatize-trading program
 
-Scaffolded — spec, manual-interactive fan-out skill, cell/reconciler
-agents, scoring, and the six signal-family axis briefings are drafted.
-**Not yet runnable at scale**; Phase-1 gating items (the shared
-`Universe/Common` skeleton, the categorization producer, the sandboxed
-driver port, the test harness) remain. Scale work is gated on the
-2026-06-15 programmatic-credit activation.
+Early phases built — the shared `Common` predicate skeleton, the
+categorization producer, the sandboxed driver, and the test harness all
+exist, and multi-sector reconciliation waves run end-to-end. The default
+run-set is seven axes (five core signal families plus instrument-risk and
+tradability/liquidity). Full-universe scale-out is gated on the
+2026-06-15 programmatic-credit activation — the topology is proven; the
+current limiter is the market tape, not the kernel.
 
 ## How to verify
 
