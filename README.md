@@ -212,7 +212,7 @@ outside it.
 
 This is where the three subprojects meet: `analyzing/` supplies the
 evidence, `trading/` proposes the position and argues both sides, and
-`accounting/` proves whether the long is admissible. The forthcoming
+`accounting/` proves whether the long is admissible. The
 **Debate** kernel framework formalizes the gate itself — `admissible_long`
 is a structure with no constructor omitting any field, so it requires
 the bull confluence claim, the kernel directional accept, a
@@ -265,15 +265,19 @@ signal — and it coincides with the practitioner's **confluence** heuristic
 legal side ([`qnarre-public`](https://github.com/quantapix/qnarre-public)).
 
 The GICS universe is fully enumerated (the full eleven-sector membership),
-and the early phases are built: the shared `Common` predicate skeleton, the
-categorization producer, the sandboxed driver, and the test harness all
-exist, and multi-sector reconciliation waves run end-to-end. The default
-run-set carries seven axes (five core signal families plus instrument-risk
-and tradability/liquidity). A structural invariant holds: a single-sector
-wave can never reach the top confluence tier, because only a subset of the
-axes are directional and the cross-section axis stays provisional until a
-cross-sector pass — so the top tier requires at least three independent
-directional axes agreeing.
+and the program now runs end-to-end through promotion: the shared predicate
+library has grown wave-over-wave to 34 collapse-bridged predicates — among
+them a complete structural options-book cluster (per-leg allow-list,
+naked-short exclusion, debit-only, bounded max loss) proved equivalent
+across sectors under sorry-free bridges — and the first per-sector slice
+(Real Estate) is committed into the kernel library as an explicit build
+root. The default run-set carries seven axes (five core signal families
+plus instrument-risk and tradability/liquidity). A structural invariant
+held exactly as designed: a single-sector wave can never reach the top
+confluence tier, because only a subset of the axes are directional and the
+cross-section axis stays provisional until a cross-sector pass — the first
+top-tier promotion waited until a cross-sector reconciliation confirmed
+sector leadership as the third independent directional axis.
 
 A sixth **Debate** framework formalizes the bull-vs-bear gate itself.
 `admissible_long` is a structure with no constructor omitting any field, so
@@ -281,12 +285,26 @@ it requires the bull confluence claim, the kernel directional accept, a
 defined-risk-clean check, and the negation of *every* bear disqualifier.
 "Veto, not a vote" becomes a type-level property. The first kernel run of it
 correctly **refuse-closed** an inadmissible candidate (no `sorry`,
-`allowed = false`); an accepting run awaits a tape where at least three
-directional axes turn bullish at once.
+`allowed = false`). The first **accepting** run followed within the week: a
+real-estate REIT (FRT) cleared all three directional axes — trend, momentum,
+and cross-section leadership against the benchmark — with zero bear vetoes,
+and `admissible_long` elaborated `allowed = true` with no `sorry`. In the
+same wave the strongest-trending candidate on the board, a semiconductor
+name (NXPI), was refuse-closed by the volatility veto on a ~47% historical
+drawdown; a later wave refuse-closed a hotel REIT (HST) on a *weak*
+volume-divergence veto. A weak veto still blocks — veto, not a vote,
+exercised on both branches.
 
-Scale-out to the full universe is gated on the programmatic-credit
-activation; the topology is proven, the current limiter is the tape, not the
-kernel.
+An earlier reading — "zero top-tier results means the tape, not the
+topology" — turned out to be a pilot-subset artifact: the waves had been
+running against a stale 22-symbol mega-cap target list, exactly the
+large-cap-growth names where trend and momentum diverge most. The remedy
+is structural: a deterministic confluence pre-screen now runs the exact
+bull-side axis proxies over the full ~526-symbol store (no kernel, no LLM
+— pure indicator arithmetic) before any wave is planned, and waves target
+the survivors. Full-universe scale-out remains gated on the
+programmatic-credit activation; the topology is proven and now has its
+first accepted citizen.
 
 ## What this repo is not
 
