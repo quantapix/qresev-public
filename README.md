@@ -74,6 +74,24 @@ Five frameworks, each under `Accounting/<Framework>/` (kernel) +
 The kernel's predicate names are the contract the Qresev `/app` Lean
 trace consumes. They do not get renamed without lockstep UI edits.
 
+#### Sector caps are a policy, not a constant
+
+The `Sector` framework's concentration cap is parametrised over a **cap
+policy** — a function from GICS sector to a weight ceiling — rather than a
+single hard-coded number. The default policy applies a uniform ceiling across
+all eleven sectors and is what the product's proof trace consumes; a portfolio
+with a tighter house limit (or a per-sector tightening, e.g. a lower ceiling on
+a single sector) supplies its own policy and the same intro theorems compose
+against it. The default specialisation is definitionally equal to the old
+fixed-ceiling form, so the kernel's public judgment surface is unchanged.
+
+The **drawdown** bound is deliberately *not* a policy. Maximum-drawdown
+discipline is a single universal defined-risk veto applied identically to every
+sector. Loosening it per sector would let a name clear the top confluence tier
+on relaxed risk terms, which would corrupt the cross-axis agreement signal the
+kernel exists to measure. A sector-wide drawdown veto firing is a correct
+outcome, not a gap.
+
 ### Defined-risk options — hard refusal at the boundary
 
 The `OptionsRisk` framework enforces a six-strategy allow-list:
@@ -295,16 +313,33 @@ drawdown; a later wave refuse-closed a hotel REIT (HST) on a *weak*
 volume-divergence veto. A weak veto still blocks — veto, not a vote,
 exercised on both branches.
 
-An earlier reading — "zero top-tier results means the tape, not the
-topology" — turned out to be a pilot-subset artifact: the waves had been
-running against a stale 22-symbol mega-cap target list, exactly the
-large-cap-growth names where trend and momentum diverge most. The remedy
-is structural: a deterministic confluence pre-screen now runs the exact
-bull-side axis proxies over the full ~526-symbol store (no kernel, no LLM
-— pure indicator arithmetic) before any wave is planned, and waves target
-the survivors. Full-universe scale-out remains gated on the
-programmatic-credit activation; the topology is proven and now has its
-first accepted citizen.
+Targeting a wave is now a deterministic three-stage filter that runs before any
+kernel or model work — pure indicator and relative-strength arithmetic over the
+full symbol store:
+
+1. **Sector rotation.** Rank the eleven sector ETFs by relative strength against
+   the benchmark. A new-sector top-tier result is reachable only where that
+   sector's ETF is leading; rotation, not risk, is usually the binding
+   constraint.
+2. **Confluence pre-screen.** Over the survivors, find the names where the
+   independent trend and momentum families agree.
+3. **Volatility veto.** Apply the defined-risk volatility gate (a maximum-
+   drawdown ceiling and an average-true-range bound). This is the actual
+   top-tier gate — confluence alone does not promote a name when the veto fires.
+
+A standing frontier view joins all three stages into one watch-list, labelling
+each candidate by its binding gate (eligible / near-miss / rotation-gated /
+veto-killed / promoted).
+
+The program now has promoted citizens across more than one sector: a
+real-estate slice, an industrials slice, and a cross-sector industrials name,
+each reconciled sorry-free. This is the structural invariant exercised in the
+open: a single-sector wave can never reach the top confluence tier, because only
+a subset of the axes are directional and the cross-section axis stays
+provisional until a cross-sector pass confirms sector leadership as the third
+independent directional axis. The full-universe scale-out remains gated on a
+separate programmatic-credit lane; the topology is proven and now has citizens
+in several sectors.
 
 ## What this repo is not
 
