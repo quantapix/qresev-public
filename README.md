@@ -114,6 +114,10 @@ combos, leveraged structures — is refused at three surfaces:
 
 This is a load-bearing project rule, not a tunable.
 
+#### Hierarchical predicates — leaves the model decides, composites the kernel derives
+
+A top-level framework judgment can be decomposed: the LLM-backed predicates are pushed down to small, independently-decidable **leaves**, and the composite that joins them is **derived in the kernel** rather than asserted. Numeric comparisons — a moving-average cross, a drawdown magnitude against its ceiling — lift to integer arithmetic the Lean elaborator settles directly (`decide` / `omega`), with no model call in the loop. Three frameworks are decomposed this way today: the momentum MACD cross (a disjunction over its component leaves), the trend SMA cross (five moving-average leaves over two routes), and the maximum-drawdown veto (a single measured magnitude bounded against its ceiling). The flat golden judgments are byte-for-byte unchanged — decomposition is an additive, more granular proof of the same conclusion, and the goldens still elaborate identically.
+
 ### Predicate spec shape
 
 ```yaml
@@ -155,6 +159,11 @@ JSON, the bar evidence view, the per-predicate audit JSON, the
 generated axiom block, the driver's audit log, and the Lean
 elaboration trace. The brand-anchor example exercises all five
 frameworks across six judgments.
+
+The accept path of the drawdown framework is now exercised directly: a
+conservative cash-heavy example portfolio elaborates
+`drawdown_disciplined` alongside a clean options book and a sector-cap
+proof under a tightened house policy.
 
 ---
 
@@ -331,15 +340,19 @@ A standing frontier view joins all three stages into one watch-list, labelling
 each candidate by its binding gate (eligible / near-miss / rotation-gated /
 veto-killed / promoted).
 
-The program now has promoted citizens across more than one sector: a
-real-estate slice, an industrials slice, and a cross-sector industrials name,
-each reconciled sorry-free. This is the structural invariant exercised in the
-open: a single-sector wave can never reach the top confluence tier, because only
-a subset of the axes are directional and the cross-section axis stays
-provisional until a cross-sector pass confirms sector leadership as the third
-independent directional axis. The full-universe scale-out remains gated on a
-separate programmatic-credit lane; the topology is proven and now has citizens
-in several sectors.
+The program now has promoted citizens across three sectors — real estate,
+industrials, and utilities — each reconciled sorry-free. Counting only committed
+kernel encodings (the golden calibration portfolios are scaffolding, not universe
+members), the encoded share of the ~526-symbol universe is on the order of 1.7%,
+every encoding sorry-free. The structural invariant holds in the open: a
+single-sector wave can never reach the top confluence tier on its own, because the
+cross-section axis stays provisional until a cross-sector pass confirms sector
+leadership as the third independent directional axis. A near-miss the same week
+makes the discipline concrete — a name that cleared trend, momentum, and sector
+leadership was still refuse-closed when its one-year maximum drawdown crossed the
+volatility ceiling by a fraction of a point. A weak veto still blocks. Veto, not a
+vote. The full-universe scale-out remains gated on a separate programmatic-credit
+lane; the topology is proven and now has citizens in several sectors.
 
 ## What this repo is not
 

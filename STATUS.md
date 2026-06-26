@@ -1,6 +1,6 @@
 # qresev-public — status
 
-_Snapshot: 2026-06-12. Refreshed weekly (Fridays) during the
+_Snapshot: 2026-06-26. Refreshed weekly (Fridays) during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the financial-domain slice:
@@ -28,50 +28,53 @@ deployment is an engineering surface, not the launch deliverable.
   judgments wired: `is_uptrend` / `is_downtrend`, `has_momentum`,
   `defined_risk_only` / `is_clean`, `has_violation` / `no_violations`,
   `drawdown_disciplined`.
-- **Brand-anchor example complete** — all five frameworks across six
-  judgments, full audit trail, and now replay-faithful on the deployed
-  endpoint (see Overall).
-- **Per-leg options-book enumeration landed.** The structural cluster
-  (per-leg allow-list, naked-short exclusion, debit-only, bounded max
-  loss) is proved as shared predicates in the universe library, with
-  sorry-free cross-sector equivalence bridges — the granular
-  counterpart to the golden kernel's closed strategy enum.
-- **Defined-risk options enforced at the type level** via a closed
-  strategy enum, in addition to the authoring-time and runtime gates.
-- **Results-propagation pipeline** emits a per-run report, a proof-DAG
-  graph, and a status-hub diagram; the product's proof surface now
-  mounts a recomposed strategy graph with price-chart overlays backed
-  by a per-run bars endpoint (landed in the app shell; production
-  deploy queued).
-
-**Next:** parametrised sector caps; additional worked examples that
-exercise the accept path of the drawdown framework.
+- **Hierarchical decomposition landed.** Three frameworks now decompose
+  their top-level judgment into independently-decidable leaves with a
+  **kernel-derived** composite: the momentum MACD cross (a disjunction
+  over its leaves), the trend SMA cross (five moving-average leaves over
+  two routes), and the maximum-drawdown veto (a single measured
+  magnitude bounded against its ceiling). Numeric comparisons lift to
+  integer arithmetic the elaborator settles directly (`decide` / `omega`,
+  no model call in the loop). The flat golden judgments are byte-for-byte
+  unchanged — decomposition is an additive, more granular proof of the
+  same conclusion.
+- **Drawdown accept path now exercised.** A conservative cash-heavy
+  example portfolio elaborates `drawdown_disciplined` alongside a clean
+  options book and a sector-cap proof under a tightened house policy —
+  closing the prior "Next" item.
+- **Per-leg options audit, v2.** The structural options-book audit was
+  folded into a single stronger predicate (per-leg structural cleanliness)
+  and proved to *imply* the prior v1 audit. The user-facing `is_clean` /
+  `defined_risk_only` judgments are byte-stable.
+- **3-PM golden triad closed.** The conservative-PM example completed the
+  three-agent golden set — a cash-heavy book with three ETFs clears
+  sector concentration under a tightened policy, drawdown discipline, and
+  a clean options book, all real-call.
+- **Parametrised sector caps shipped** — the concentration cap is a cap
+  policy (GICS sector → ceiling), with the default definitionally equal
+  to the old fixed ceiling, so the public judgment surface is unchanged.
 
 ## Axiomatize-trading program
 
-- **First top-tier (Tier-A) result.** A targeted-confluence wave
-  produced the program's first Tier-A: a real-estate REIT with trend,
-  momentum, and cross-section leadership all bullish, every confluence
-  bridge sorry-free, and zero bear vetoes. Its sector slice is the
-  first per-sector promotion committed into the kernel library as an
-  explicit build root; the kernel builds green with the golden
-  reference untouched.
-- **First accepting Debate run.** `admissible_long` elaborated
-  `allowed = true` with no `sorry` for that candidate — and in the same
-  wave the strongest-trending name on the board was refuse-closed by
-  the volatility veto (~47% historical drawdown). A later wave
-  refuse-closed a candidate on a *weak* volume-divergence veto. Veto,
-  not a vote, exercised on both branches.
-- **Shared predicate library at 34** collapse-bridged predicates
-  (from 24 at the last snapshot), including bear-side mirrors,
-  an overextension veto, the structural sector map, and the complete
-  options-book cluster. The cross-section axis is promoted from
-  provisional to confirmed globally.
-- **The "limiter is the tape" claim was retracted** — it was a
-  pilot-subset artifact of a stale 22-symbol target list. A
-  deterministic confluence pre-screen over the full ~526-symbol store
-  now front-ends every wave; waves target the survivors. First
-  Industrials slice reached Tier-B and is held pending promotion.
+- **Seven top-tier (Tier-A) names across three sectors.** Promotions now
+  span industrials, real estate, and utilities — each reconciled
+  sorry-free, each committed into the kernel library as an explicit build
+  root, with the golden reference untouched. The utilities slice is the
+  third promoted sector. A name re-tiered up this week after both of its
+  prior vetoes cleared on a fresh blind re-slice.
+- **Accepting and refusing Debate runs on record.** `admissible_long`
+  elaborates `allowed = true` with no `sorry` for cleared candidates; a
+  near-miss the same week was refuse-closed when its one-year maximum
+  drawdown crossed the volatility ceiling by a fraction of a point. A
+  weak veto still blocks. Veto, not a vote.
+- **Coverage published truthfully on `/status`.** Counting only committed
+  Universe-Bridge encodings (the golden calibration portfolio is excluded
+  by design), the encoded share of the ~526-symbol universe is on the
+  order of 1.7%, every encoding sorry-free. Tier counts are derived from
+  per-symbol enumeration, never carried as a standalone number.
+- **Shared predicate library at 34** collapse-bridged predicates,
+  including bear-side mirrors, an overextension veto, the structural
+  sector map, and the complete options-book cluster.
 
 Full-universe scale-out stays gated on the programmatic-credit
 activation.
@@ -81,7 +84,9 @@ activation.
 - **Data layer live and current.** The columnar OHLCV store + TA-Lib
   parity indicator reference are refreshed across the full universe
   (526 symbols including anchor sector ETFs, bars current through the
-  snapshot week); the pre-screen above runs directly over it.
+  snapshot week); the deterministic three-stage targeting filter runs
+  directly over it. No indicator-surface or ingest-shape change this
+  window.
 - **Canonical bar shape** `{ ts, o, h, l, c, v, adj_c }` enforced at
   the ingest and feed boundaries.
 - **Coverage status** surfaces through the framework's `/status`
@@ -97,13 +102,14 @@ Portfolios → chart + aggregate panels) and a backtest-summary surface.
   with separate capital, strategy, journal, and broker account. The
   discipline rules (paper-only, defined-risk-only, not-day-trading,
   risk gate, separate capital, journal-before-quitting) are unchanged
-  this week — the agents ran their full scheduled cadence.
+  this window — the agents ran their full scheduled cadence.
 - **Scheduled routines** (premarket / open / midday / close /
   overnight) run on a cron scheduler; a daily leaderboard reconciles
   fund return vs the benchmark from a single source.
 - **Bull-vs-bear debate gate live** for the `Trend.is_uptrend`
-  judgment — and its formalization now has an accepting *and* a
-  refusing kernel run on record (see the program section).
+  judgment over the ~526-symbol universe — its formalization now has an
+  accepting *and* a refusing kernel run on record (see the program
+  section). Unchanged this window.
 
 **Next:** migrate the cron routines to the programmatic SDK lane
 (gated on the credit activation).
