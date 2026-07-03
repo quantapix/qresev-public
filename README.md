@@ -116,7 +116,29 @@ This is a load-bearing project rule, not a tunable.
 
 #### Hierarchical predicates — leaves the model decides, composites the kernel derives
 
-A top-level framework judgment can be decomposed: the LLM-backed predicates are pushed down to small, independently-decidable **leaves**, and the composite that joins them is **derived in the kernel** rather than asserted. Numeric comparisons — a moving-average cross, a drawdown magnitude against its ceiling — lift to integer arithmetic the Lean elaborator settles directly (`decide` / `omega`), with no model call in the loop. Three frameworks are decomposed this way today: the momentum MACD cross (a disjunction over its component leaves), the trend SMA cross (five moving-average leaves over two routes), and the maximum-drawdown veto (a single measured magnitude bounded against its ceiling). The flat golden judgments are byte-for-byte unchanged — decomposition is an additive, more granular proof of the same conclusion, and the goldens still elaborate identically.
+A top-level framework judgment can be decomposed: the model-backed predicates
+are pushed down to small, independently-decidable **leaves**, and the composite
+that joins them is **derived in the kernel** rather than asserted. Decomposition
+now spans all five frameworks, in three kernel shapes:
+
+- **Bool-composite.** Boolean leaves closed by a shared tactic — a disjunction
+  over routes (the momentum MACD cross, the trend SMA cross) or a
+  conjunction-with-required-negation (trend volume confirmation), where a bear
+  money-flow guard is a structure *field*, not a vote: the composite cannot be
+  built while the disqualifier holds.
+- **Measurement-leaf.** A single leaf measures an integer magnitude and the
+  kernel settles the bound directly (`decide` / `omega`), with no model call in
+  the loop. This now covers all three bound directions — an upper bound
+  (maximum drawdown against its ceiling, sector concentration against its cap),
+  a lower bound (a trend fit quality floor), and a two-sided band (a momentum
+  oscillator range). Fractions lift to basis points, bounded indices to
+  centi-units, so the comparison is exact integer arithmetic.
+- **Live-judgment landings.** Several decomposed elements now compose back into
+  the live top-level judgment via a kernel composition lemma, not just as
+  standalone atoms.
+
+The flat golden judgments are byte-for-byte unchanged — decomposition is an
+additive, more granular proof of the same conclusion.
 
 ### Predicate spec shape
 
@@ -169,11 +191,27 @@ proof under a tightened house policy.
 
 ## 2. Market inspection (`analyzing/`)
 
-`analyzing/` is the data layer: a TypeScript editor extension that
-ingests public OHLCV bars, computes a TA-Lib-parity indicator
-reference, and charts both. It is the source the kernel's evidence is
-drawn from — predicate sub-agents read bars and indicators that this
-surface produced.
+`analyzing/` has two roles behind the financial slice.
+
+**As market-data supplier** it is the named producer of the historical
+aggregate **tape** — the OHLCV bars and the TA-Lib-parity indicator reference —
+over the S&P 500 plus anchor-ETF universe, on locked schemas. This is the
+ground truth the `accounting/` kernel's evidence is drawn from: the kernel
+reads the tape as files and never imports the analyzer, and the portfolio
+agents consult it for decision support only — the live order path never touches
+the tape.
+
+**As a viewing surface** it re-homes market inspection as a local-only browser
+surface (never publicly deployed) that mounts the shared graphing kits and
+drives a sector ▸ industry ▸ symbol (and portfolio ▸ holdings) drill-down over
+the same ground-truth store. It is run-independent, ground-truth-only browsing —
+the complement to the run-keyed product surface.
+
+Two invariants hold the seam clean: the consumer reads **files, never a served
+API**, and the viewer renders **ground-truth tape only, never kernel
+emissions** — no predicate verdict, framework judgment, or proof node appears in
+an inspection panel. GICS mappings and portfolio snapshots are read-only here;
+the analyzer never writes them and never becomes an order surface.
 
 - **Storage.** A columnar local store (Parquet, queried through an
   embedded analytical SQL engine) keyed by symbol. No vendor lock-in;
@@ -313,12 +351,12 @@ defined-risk-clean check, and the negation of *every* bear disqualifier.
 "Veto, not a vote" becomes a type-level property. The first kernel run of it
 correctly **refuse-closed** an inadmissible candidate (no `sorry`,
 `allowed = false`). The first **accepting** run followed within the week: a
-real-estate REIT (FRT) cleared all three directional axes — trend, momentum,
+real-estate REIT cleared all three directional axes — trend, momentum,
 and cross-section leadership against the benchmark — with zero bear vetoes,
 and `admissible_long` elaborated `allowed = true` with no `sorry`. In the
 same wave the strongest-trending candidate on the board, a semiconductor
-name (NXPI), was refuse-closed by the volatility veto on a ~47% historical
-drawdown; a later wave refuse-closed a hotel REIT (HST) on a *weak*
+name, was refuse-closed by the volatility veto on a ~47% historical
+drawdown; a later wave refuse-closed a hotel REIT on a *weak*
 volume-divergence veto. A weak veto still blocks — veto, not a vote,
 exercised on both branches.
 
@@ -340,19 +378,23 @@ A standing frontier view joins all three stages into one watch-list, labelling
 each candidate by its binding gate (eligible / near-miss / rotation-gated /
 veto-killed / promoted).
 
-The program now has promoted citizens across three sectors — real estate,
-industrials, and utilities — each reconciled sorry-free. Counting only committed
-kernel encodings (the golden calibration portfolios are scaffolding, not universe
-members), the encoded share of the ~526-symbol universe is on the order of 1.7%,
-every encoding sorry-free. The structural invariant holds in the open: a
-single-sector wave can never reach the top confluence tier on its own, because the
-cross-section axis stays provisional until a cross-sector pass confirms sector
-leadership as the third independent directional axis. A near-miss the same week
-makes the discipline concrete — a name that cleared trend, momentum, and sector
-leadership was still refuse-closed when its one-year maximum drawdown crossed the
-volatility ceiling by a fraction of a point. A weak veto still blocks. Veto, not a
-vote. The full-universe scale-out remains gated on a separate programmatic-credit
-lane; the topology is proven and now has citizens in several sectors.
+The program now has promoted citizens across **four** sectors — real estate,
+industrials, utilities, and financials — each reconciled sorry-free. Counting
+only committed kernel encodings (the golden calibration portfolios are
+scaffolding, not universe members), the encoded share of the ~526-symbol
+universe is on the order of **1.9%**, every encoding sorry-free.
+
+The newest sector landing is a worked instance of the discipline, not a call on
+any name: the first financials encoding cleared the trend-and-momentum
+confluence and the defined-risk volatility veto, yet the kernel **held it below
+the top tier** — its sector was lagging the benchmark on relative strength (so no
+third independent directional axis was available) and a live volume-divergence
+signal was present. Confluence plus a clean volatility veto is necessary but not
+sufficient; the cross-section axis stays provisional until a cross-sector pass,
+and a live bear signal keeps a name out of the top tier. A refusal-to-promote is
+a correct outcome, not a gap. The full-universe scale-out remains gated on a
+separate programmatic lane, paused pending a provider-plan change; the topology
+is proven and now has citizens in several sectors.
 
 ## What this repo is not
 
