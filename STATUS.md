@@ -1,11 +1,38 @@
 # qresev-public — status
 
-_Snapshot: 2026-06-26. Refreshed weekly (Fridays) during the
+_Snapshot: 2026-07-17. Refreshed weekly (Fridays) during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the financial-domain slice:
 what has landed, where each of the three surfaces stands, and what is
 next. It is a companion to the [README](./README.md), not a substitute.
+
+## Correction — 2026-07-17
+
+On 2026-07-14 our own adversarial review lane found leak channels in the
+cross-axis **agreement oracle** — the mechanism that scored the Tier-A /
+Tier-B promotions described below. Independent verification cells could,
+in principle, observe one another's outputs, so the agreement-based tier
+figures minted before that date are not established as blind.
+Accordingly:
+
+- The **"seven Tier-A names"** figure and the "re-tiered up on a fresh
+  blind re-slice" claim are **withdrawn** pending re-verification. A
+  blind re-slice of the still-eligible names has since been completed
+  under the corrected contracts; the corrected figure publishes with the
+  single dated status update that carries all axes together, not ahead of
+  it — so no page vouches for another mid-correction.
+- What is unaffected: **kernel soundness.** Every `lake build` is green
+  and every promoted slice is `sorry`-free; the accepting/refusing
+  `admissible_long` Debate behavior and the defined-risk options refusal
+  are mechanical kernel facts, not agreement figures — they stand.
+- The financial sign-off posture treats any surface derived from the
+  agreement tiers as suspended until the re-slice lands. Earlier weekly
+  digests are dated records, left intact; this correction supersedes
+  their tier language.
+
+We surfaced this because the cells check one another and one lane caught
+it — not because the earlier numbers were right all along.
 
 ## Overall
 
