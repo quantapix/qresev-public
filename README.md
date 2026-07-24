@@ -60,16 +60,40 @@ anti-poison guard rejects and retries evidence that carries no numbers.
 
 ### Frameworks
 
-Five frameworks, each under `Accounting/<Framework>/` (kernel) +
-`predicates/<framework>/` (specs).
+Eight framework directories carry kernels and judgments today. Five of them —
+Trend, Momentum, OptionsRisk, Sector, Drawdown — are the **golden reference**:
+hand-built, worked end-to-end on committed example portfolios, and the set the
+automated program is scored against. Three more landed under a chartered
+expansion.
 
-| Framework | Kernel | Top-level judgment | Predicates |
-|---|---|---|---:|
-| **Trend** | `Accounting/Trend/` | `is_uptrend`, `is_downtrend` | 5 |
-| **Momentum** | `Accounting/Momentum/` | `has_momentum` | 4 |
-| **OptionsRisk** | `Accounting/OptionsRisk/` | `defined_risk_only`, `is_clean` | 6 |
-| **Sector** | `Accounting/Sector/` | `has_violation`, `no_violations` | 3 |
-| **Drawdown** | `Accounting/Drawdown/` | `drawdown_disciplined` | 3 |
+| Framework | Top-level judgment | Scope |
+|---|---|---|
+| **Trend** | `is_uptrend`, `is_downtrend` | per symbol |
+| **Momentum** | `has_momentum` | per symbol |
+| **OptionsRisk** | `defined_risk_only`, `is_clean` | per book |
+| **Sector** | `has_violation`, `no_violations` | per book |
+| **Drawdown** | `drawdown_disciplined` | per book |
+| **Regime** | `regime_trending`, `regime_ranging`, `regime_high_vol`, `regime_compressed` | per symbol, non-exclusive preconditions |
+| **ExitDiscipline** | `exit_disciplined` | per position |
+| **Hedging** | `hedge_disciplined`, `hedge_regime_consistent` | per book |
+| **Debate** | `admissible_long` | per candidate |
+
+Two shapes in the newer three are worth naming. **Regime** judgments are
+non-exclusive preconditions rather than verdicts — a symbol may satisfy several
+at once — and each carries an explicit refutation dual, so "not established" and
+"established false" are different kernel facts. **ExitDiscipline** is the first
+per-*position* framework: four of its prongs are required *negations* (a fired
+exit signal disqualifies), so the composite cannot be constructed while a
+disqualifier holds.
+
+The **Hedging** framework's two judgments landed as whole structures with no
+omittable field: a sizing-and-volatility-and-floor conjunction, and a consistency
+judgment tying a hedge's presence to the prevailing regime. Its remaining
+predicates are blocked on a portfolio-schema extension rather than on kernel
+work — an honest bound, recorded rather than stubbed. Predicates that read a
+protective put's strike, or the point at which a hedge is due to roll, are
+computable today from the tape plus the position's entry date; the ones that need
+premium history are not, and they are not pretended into existence.
 
 The kernel's predicate names are the contract the Qresev `/app` Lean
 trace consumes. They do not get renamed without lockstep UI edits.
@@ -329,6 +353,14 @@ signal — and it coincides with the practitioner's **confluence** heuristic
 `(GICS sector, axis)` cell. This mirrors the full-U.S.-Code program on the
 legal side ([`qnarre-public`](https://github.com/quantapix/qnarre-public)).
 
+**Tier language on this page is under re-verification.** Cross-axis *agreement*
+is what promotes a name to the top confluence tier, and in July 2026 our own
+adversarial review lane found leak channels in the agreement oracle. Every
+agreement-derived tier claim below is dated pre-correction and provisional; the
+mechanical facts — what is encoded, and whether it elaborates `sorry`-free — are
+unaffected. [`STATUS.md`](./STATUS.md) carries the correction and the current
+posture.
+
 The GICS universe is fully enumerated (the full eleven-sector membership),
 and the program now runs end-to-end through promotion: the shared predicate
 library has grown wave-over-wave to 34 collapse-bridged predicates — among
@@ -418,7 +450,8 @@ release-narrative snapshot.
 
 ## Contact
 
-[`quantapix@gmail.com`](mailto:quantapix@gmail.com)
+[github.com/quantapix](https://github.com/quantapix) — open an issue on any repo
+in the org. Answered in public; there is no contact email.
 
 ## License
 
