@@ -448,6 +448,8 @@ kernel-shape changes are committed as ordinary diffs — the commit log
 is the change record. See [`STATUS.md`](./STATUS.md) for the current
 release-narrative snapshot.
 
+Authored by a sole developer working with an AI assistant (Claude Code) under written CLAUDE.md contracts — methodology in [qagents-public](https://github.com/quantapix/qagents-public).
+
 ## Contact
 
 [github.com/quantapix](https://github.com/quantapix) — open an issue on any repo
