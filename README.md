@@ -60,11 +60,13 @@ anti-poison guard rejects and retries evidence that carries no numbers.
 
 ### Frameworks
 
-Eight framework directories carry kernels and judgments today. Five of them —
+Ten framework directories carry kernels and judgments today. Five of them —
 Trend, Momentum, OptionsRisk, Sector, Drawdown — are the **golden reference**:
 hand-built, worked end-to-end on committed example portfolios, and the set the
 automated program is scored against. Three more landed under a chartered
-expansion.
+expansion. Two are *program* frameworks rather than portfolio judgments: the
+bull-vs-bear gate, and a factor decomposition that ships as its own kernel
+library.
 
 | Framework | Top-level judgment | Scope |
 |---|---|---|
@@ -77,6 +79,7 @@ expansion.
 | **ExitDiscipline** | `exit_disciplined` | per position |
 | **Hedging** | `hedge_disciplined`, `hedge_regime_consistent` | per book |
 | **Debate** | `admissible_long` | per candidate |
+| **Factor** | `factor_disciplined` | per factor-decomposition subject |
 
 Two shapes in the newer three are worth naming. **Regime** judgments are
 non-exclusive preconditions rather than verdicts — a symbol may satisfy several
@@ -138,6 +141,30 @@ combos, leveraged structures — is refused at three surfaces:
 
 This is a load-bearing project rule, not a tunable.
 
+#### The composition question, and why it is not a widening
+
+A structure with a name outside the six — a collar, say — raised a real
+question: does supporting it widen the allow-list? The answer settled as a
+two-clause test, and it deliberately does not touch the enum. A composed
+multi-leg structure is admissible **iff** every leg is independently
+allow-listed **and** every short leg is covered by a position the same book
+already holds. A collar decomposes into a covered call plus a protective put
+and needs no new `Strategy` constructor; a short call with a long put and no
+underlying is a synthetic short and stays refused. The allow-list did not get
+longer — the composition rule made it possible to say *why* one three-leg
+structure is inside it and another is not.
+
+The load-bearing half is the second clause, because "covered" has to be a
+fact rather than an inference. A leg-pairing identifier is now minted when the
+ticket is written and travels onto every position and ledger row it opens; a
+pairing reconstructed afterwards from "same underlying, same day, opposite
+sides" is a guess, and a wrong guess reads as cleared without having been
+cleared. It also has to survive a *partial* close, or a half-closed collar
+reads as an uncovered short. Positions that predate the identifier are charged
+the full share requirement rather than credited a spread on inference —
+releasing a coverage requirement on a guess is the one direction the rule
+forbids.
+
 #### Hierarchical predicates — leaves the model decides, composites the kernel derives
 
 A top-level framework judgment can be decomposed: the model-backed predicates
@@ -163,6 +190,43 @@ now spans all five frameworks, in three kernel shapes:
 
 The flat golden judgments are byte-for-byte unchanged — decomposition is an
 additive, more granular proof of the same conclusion.
+
+### Factor decomposition — a kernel judgment with no model in the loop
+
+The newest framework has a property none of the others do: **it makes no LLM
+calls at all.** A separate fit lane derives a small set of per-symbol factor
+return series over the intersection of the bar store, the indicator reference
+and the sector map, with a formation lag, leave-one-out sector baskets, and
+split-integrity re-derivations of the intermediate columns. The kernel then
+checks one thing about the result — the exact quantize-then-residualize
+identity, as an integer fold closed by `decide` — plus residual and
+out-of-sample bounds. The facts are lifted from the fit report by a
+stdlib-only emitter that is *statically* free of model calls and fails closed
+if the report's content hash does not match what it was told to read.
+
+Three properties are worth naming because each one closes a way the
+decomposition could have lied:
+
+- **The identity refuses rather than approximates.** A vector-length
+  mismatch, a day-count mismatch, or an empty sample all evaluate to `false`.
+  There is no tolerance parameter, and a decomposition that does not
+  reconstruct its own inputs does not elaborate.
+- **A fit report influenced by the graph surface is refused outright** at the
+  emitter, before it can become an axiom. The decomposition exists to be an
+  independent reading; letting the rendering layer feed back into it would make
+  it a second opinion about the first opinion.
+- **The judgments are new and parallel, never a widening of an existing
+  one.** `factor_disciplined` composes alongside the golden frameworks and
+  never re-targets a golden bridge, so adding it cannot move a conclusion that
+  was already proved.
+
+Promotion of a decomposition set is session-fired and never automatic, the
+promoted object is the whole per-date set rather than a file, and a restatement
+of an already-promoted set is refused rather than overwritten. One further
+subproject is licensed to read the promoted copies as a second reader — named
+explicitly, additively, and read-only; it has no write path back, and it is
+barred from the kernel and from every agreement quorum, so a simulation can
+never become evidence for a proof.
 
 ### Predicate spec shape
 
@@ -252,6 +316,15 @@ the analyzer never writes them and never becomes an order surface.
   anchor sector ETFs; a batch ingest chunks the fetch and isolates
   per-symbol failures so a full-universe refresh never rides one giant
   download.
+- **A refresh is four steps in order, not one.** Bars, then the indicator
+  reference, then the materialised market-breadth series, then the freshness
+  manifest that lockstep-checks the three against each other. The breadth lane
+  carries a single implementation of its recurrences, and the manifest refuses
+  to call the tape coherent if any leg's as-of date disagrees.
+- **A pinned tape of record.** A committed pin names the content hash of the
+  tape a checkout is supposed to hold, so a kernel run on a lagging machine
+  aborts instead of quietly proving something against older data. The pin moves
+  forward only, and never from a machine that is itself behind.
 
 The indicator reference produced here is exactly what the
 `accounting/` `Trend` / `Momentum` predicates consult, and what the
@@ -286,6 +359,15 @@ publishing — the agents themselves are private.
 6. **Journal before quitting.** A routine that places or modifies a
    position appends its reasoning to a dated journal before exiting; if
    journaling fails, the run is failed.
+7. **Stop-losses on every equity buy, and coverage is a claim about the
+   broker.** What the agent *intended* is recorded on the position; whether a
+   protective order is actually resting is a separate question answered by
+   querying the broker, and the two are never conflated. A verification that
+   cannot see the whole order tree returns *unknown* rather than a breach.
+
+That seventh rule is stated in that shape because both halves of it were
+learned the expensive way, and the honest version of the story is in
+[`STATUS.md`](./STATUS.md).
 
 ### Bull-vs-bear debate — gated by the kernel
 
@@ -353,13 +435,16 @@ signal — and it coincides with the practitioner's **confluence** heuristic
 `(GICS sector, axis)` cell. This mirrors the full-U.S.-Code program on the
 legal side ([`qnarre-public`](https://github.com/quantapix/qnarre-public)).
 
-**Tier language on this page is under re-verification.** Cross-axis *agreement*
-is what promotes a name to the top confluence tier, and in July 2026 our own
-adversarial review lane found leak channels in the agreement oracle. Every
-agreement-derived tier claim below is dated pre-correction and provisional; the
-mechanical facts — what is encoded, and whether it elaborates `sorry`-free — are
-unaffected. [`STATUS.md`](./STATUS.md) carries the correction and the current
-posture.
+**Tier language on this page is withdrawn, and the re-verification that would
+have restored it did not.** Cross-axis *agreement* is what promotes a name to
+the top confluence tier, and in July 2026 our own adversarial review lane found
+leak channels in the agreement oracle. A blind re-slice of the names still
+eligible on that tape then completed and **reproduced no top-tier result**.
+Every agreement-derived tier claim below is dated pre-correction and remains
+withdrawn; the mechanical facts — what is encoded, and whether it elaborates
+`sorry`-free — are unaffected. [`STATUS.md`](./STATUS.md) carries the correction
+and the current posture, and the public status board's *withheld* outranks any
+number on this page.
 
 The GICS universe is fully enumerated (the full eleven-sector membership),
 and the program now runs end-to-end through promotion: the shared predicate
@@ -382,13 +467,9 @@ it requires the bull confluence claim, the kernel directional accept, a
 defined-risk-clean check, and the negation of *every* bear disqualifier.
 "Veto, not a vote" becomes a type-level property. The first kernel run of it
 correctly **refuse-closed** an inadmissible candidate (no `sorry`,
-`allowed = false`). The first **accepting** run followed within the week: a
-real-estate REIT cleared all three directional axes — trend, momentum,
-and cross-section leadership against the benchmark — with zero bear vetoes,
-and `admissible_long` elaborated `allowed = true` with no `sorry`. In the
-same wave the strongest-trending candidate on the board, a semiconductor
-name, was refuse-closed by the volatility veto on a ~47% historical
-drawdown; a later wave refuse-closed a hotel REIT on a *weak*
+`allowed = false`). In the same wave the strongest-trending candidate on the
+board, a semiconductor name, was refuse-closed by the volatility veto on a
+~47% historical drawdown; a later wave refuse-closed a hotel REIT on a *weak*
 volume-divergence veto. A weak veto still blocks — veto, not a vote,
 exercised on both branches.
 
@@ -427,6 +508,17 @@ and a live bear signal keeps a name out of the top tier. A refusal-to-promote is
 a correct outcome, not a gap. The full-universe scale-out remains gated on a
 separate programmatic lane, paused pending a provider-plan change; the topology
 is proven and now has citizens in several sectors.
+
+The most recent multi-sector wave illustrates the gate rather than the
+numerator. It ran the full pipeline across four sectors, every cell elaborated,
+every mechanical gate passed — and **nothing was promoted.** Its blindness
+certification came back a *breach* verdict, and the verdict was frozen as a
+breach rather than argued down, even though the substantive findings measured
+zero information disclosure. The wave is held in its sandbox at the operator
+gate, its evidence bundle archived, and the encoded census below is unchanged
+by it. Freezing an inconvenient verdict before reacting to it is the only order
+of operations that keeps a certification meaningful; a wave whose cert was
+adjusted after the fact would be evidence of nothing.
 
 ## What this repo is not
 
