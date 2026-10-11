@@ -7,9 +7,9 @@
 > `accounting/` (the formal kernel), `analyzing/` (market inspection),
 > and `trading/` (portfolio-management agents).
 
-A weekly-refreshed window into the formal-financial kernel and its
-supporting engineering, running alongside the private working
-repository. The kernel shares the same three-layer split as
+A window into the formal-financial kernel and its supporting engineering,
+running alongside the private working repository. It carries prose only — no
+kernel source is published here. The kernel shares the same three-layer split as
 [`qnarre-public`](https://github.com/quantapix/qnarre-public),
 different domain: instead of complaints under federal statutes, it
 proves portfolio-level judgments over OHLCV bars + indicator series +
@@ -28,13 +28,15 @@ reads shared data through thin loaders, never imports another's modules.
 | Surface | Private subproject | Role |
 |---|---|---|
 | **Formal evaluator** | `accounting/` | Lean4 kernel + LLM-backed predicates. The verifier that backs Qresev. |
-| **Market inspection** | `analyzing/` | A TypeScript editor extension over a local OHLCV store — ingest, indicators, charting. The data layer the kernel's evidence is drawn from. |
-| **Portfolio management** | `trading/` | Three autonomous portfolio-management agents on a paper broker, each with its own capital, strategy, and journal. The decision layer whose tickets the kernel can gate. |
+| **Market inspection** | `analyzing/` | A local-only TypeScript viewer plus Python ingest scripts over a local OHLCV store — ingest, indicator reference, charting. The data layer the kernel's evidence is drawn from. |
+| **Portfolio management** | `trading/` | Three portfolio-management agents on a paper broker, each with its own capital, strategy, and journal. Their scheduled routines have been switched off since 2026-09-20. The decision layer whose tickets the kernel can gate. |
 
 The pipeline reads left-to-right: `analyzing/` produces the bars and
 indicator reference; `trading/` proposes positions; `accounting/`
 proves whether a portfolio (or a single candidate) satisfies a named
-framework. The product surface streams the kernel's verdict.
+framework. The product's API replays a committed example through the kernel
+and streams the result; the app page does not consume that stream yet
+([`STATUS.md`](./STATUS.md) says exactly what it shows today).
 
 ---
 
@@ -46,14 +48,14 @@ framework. The product surface streams the kernel's verdict.
 |---|---|---|---|
 | **Formal kernel** (`Accounting/<Framework>/*.lean`) | only Lean | only Lean | Lean elaborator. No I/O, no LLM calls. |
 | **Predicate functions** (`predicates/<framework>/*.md`) | one portfolio JSON + bar/indicator evidence | a single `Bool` (plus evidence + uncertainty) | LLM sub-agent with `context: fork`. |
-| **Driver** (`scripts/extract_facts.py`) | manifest + portfolio | the framework's generated axiom block + audit JSON | LLM invocations, Opus only. |
+| **Driver** (`scripts/extract_facts.py`) | manifest + portfolio | the framework's generated axiom block + audit JSON | LLM invocations, top-tier model only. |
 
 The Lean kernel never reads OHLCV bars, indicator series, parquet, or
 JSON. The predicate sub-agents never write Lean. The driver is a thin
 coordinator with no financial reasoning of its own. The verifiable
 proof IS the Lean elaboration trace produced by `lake build`.
 
-The driver runs every committed extraction on a frontier model (Opus); a
+The driver runs every committed extraction on a top-tier model; a
 bake-off showed weaker models fabricate numeric evidence while reporting it
 confidently, so a cheaper tier is refused for any retained run. An
 anti-poison guard rejects and retries evidence that carries no numbers.
@@ -70,8 +72,8 @@ library.
 
 | Framework | Top-level judgment | Scope |
 |---|---|---|
-| **Trend** | `is_uptrend`, `is_downtrend` | per symbol |
-| **Momentum** | `has_momentum` | per symbol |
+| **Trend** | `is_uptrend`, `is_downtrend` | per portfolio |
+| **Momentum** | `has_momentum` | per portfolio |
 | **OptionsRisk** | `defined_risk_only`, `is_clean` | per book |
 | **Sector** | `has_violation`, `no_violations` | per book |
 | **Drawdown** | `drawdown_disciplined` | per book |
@@ -91,15 +93,14 @@ disqualifier holds.
 
 The **Hedging** framework's two judgments landed as whole structures with no
 omittable field: a sizing-and-volatility-and-floor conjunction, and a consistency
-judgment tying a hedge's presence to the prevailing regime. Its remaining
-predicates are blocked on a portfolio-schema extension rather than on kernel
-work — an honest bound, recorded rather than stubbed. Predicates that read a
-protective put's strike, or the point at which a hedge is due to roll, are
-computable today from the tape plus the position's entry date; the ones that need
-premium history are not, and they are not pretended into existence.
+judgment tying a hedge's presence to the prevailing regime. Its last three
+predicates had been recorded as blocked rather than stubbed, because they need
+premium history the portfolio schema did not carry. They landed on 2026-08-22
+once a fills ledger existed to read: they take entry facts from that ledger and
+abstain when a position carries none.
 
-The kernel's predicate names are the contract the Qresev `/app` Lean
-trace consumes. They do not get renamed without lockstep UI edits.
+The kernel's predicate names are the contract the Qresev report surfaces
+consume. They do not get renamed without lockstep UI edits.
 
 #### Sector caps are a policy, not a constant
 
@@ -169,8 +170,9 @@ forbids.
 
 A top-level framework judgment can be decomposed: the model-backed predicates
 are pushed down to small, independently-decidable **leaves**, and the composite
-that joins them is **derived in the kernel** rather than asserted. Decomposition
-now spans all five frameworks, in three kernel shapes:
+that joins them is **derived in the kernel** rather than asserted. As of
+2026-08-16 decomposition covers every judgment framework, in three kernel
+shapes:
 
 - **Bool-composite.** Boolean leaves closed by a shared tactic — a disjunction
   over routes (the momentum MACD cross, the trend SMA cross) or a
@@ -188,7 +190,7 @@ now spans all five frameworks, in three kernel shapes:
   the live top-level judgment via a kernel composition lemma, not just as
   standalone atoms.
 
-The flat golden judgments are byte-for-byte unchanged — decomposition is an
+The flat golden judgments are unchanged — decomposition is an
 additive, more granular proof of the same conclusion.
 
 ### Factor decomposition — a kernel judgment with no model in the loop
@@ -222,7 +224,7 @@ decomposition could have lied:
 
 Promotion of a decomposition set is session-fired and never automatic, the
 promoted object is the whole per-date set rather than a file, and a restatement
-of an already-promoted set is refused rather than overwritten. One further
+of an already-promoted set is refused unless explicitly forced. One further
 subproject is licensed to read the promoted copies as a second reader — named
 explicitly, additively, and read-only; it has no write path back, and it is
 barred from the kernel and from every agreement quorum, so a simulation can
@@ -230,50 +232,52 @@ never become evidence for a proof.
 
 ### Predicate spec shape
 
-```yaml
----
-predicate: <name>
-framework: trend | momentum | options-risk | sector | drawdown
-returns: Bool
-inputs:
-  portfolio: <slug>
-  bars: <date range>
-evidence_required: <one-line description>
-uncertainty_cap: 0.20
----
-```
+Each predicate is one markdown file. Its frontmatter names the predicate,
+describes it in a sentence, declares that it runs in a forked context, and lists
+the tools the sub-agent may use. The body has six required sections:
 
-Body sections: **Question**, **Authority** (the indicator-library
-reference; TA-Lib parity is the contract for indicator predicates),
-**Evidence**, **Adversary case**, **Output**. The sub-agent returns a
-JSON object with `{ value: Bool, evidence: [...], uncertainty: [0,1) }`.
-The driver records each as a Lean `axiom` in the framework's generated
-facts file.
+1. **Lean signature** — the exact `axiom` declaration the predicate discharges.
+2. **Inputs** — the entity references the sub-agent expects alongside the
+   portfolio.
+3. **Authority** — the indicator definition and threshold rationale (a column
+   of the committed indicator reference, with TA-Lib parity where TA-Lib
+   defines the indicator) and, for the options framework, the allow-list rule.
+4. **Decision rubric** — a numbered list of conditions; the output is `true`
+   iff a documented threshold is met.
+5. **Output schema** — `{ value: Bool, evidence: [...], uncertainty }`, where
+   `uncertainty` is a level, not a number.
+6. **Test cases** — at least one positive and one negative.
+
+The driver records each returned value as a Lean `axiom` in the framework's
+generated facts file. An earlier version of this section showed a frontmatter
+block with fields the specs do not carry.
 
 ### Build and verify
+
+In the private tree, verification is one command:
 
 ```
 lake build
 ```
 
 Either the kernel elaborates against the generated facts — the
-portfolio judgment holds across all five frameworks — or it does not,
+portfolio judgment holds across every framework its manifest names — or it does not,
 in which case the failing theorem names the predicate that does not
 provide enough evidence under the current axiom set. There is no "sort
 of holds."
 
 ### Worked examples
 
-`examples/<id>/` holds per-portfolio artifacts: the redacted portfolio
-JSON, the bar evidence view, the per-predicate audit JSON, the
-generated axiom block, the driver's audit log, and the Lean
-elaboration trace. The brand-anchor example exercises all five
-frameworks across six judgments.
+In the private tree, `examples/<id>/` holds per-portfolio artifacts: the
+synthetic portfolio, the run manifest, the per-predicate facts, the generated
+axiom block, the proof file, and the report, proof-graph and failure-loci
+files the product surfaces read. The brand-anchor example exercises four of
+the five golden frameworks.
 
 The accept path of the drawdown framework is now exercised directly: a
 conservative cash-heavy example portfolio elaborates
-`drawdown_disciplined` alongside a clean options book and a sector-cap
-proof under a tightened house policy.
+`drawdown_disciplined` alongside an options book that is clean vacuously (it
+has no legs) and a sector-cap proof under a tightened house policy.
 
 ---
 
@@ -310,17 +314,19 @@ the analyzer never writes them and never becomes an order surface.
   sees vendor strings. (See the cross-domain bar-shape note below.)
 - **TA-Lib parity.** Indicator math matches TA-Lib semantics exactly,
   including the MACD EMA-realignment quirk where both EMAs align to the
-  slow-period start. A Python TA-Lib reference is the ground truth; the
-  parity check runs on every framework that touches indicators.
+  slow-period start. A Python TA-Lib reference is the ground truth that
+  indicator code is checked against.
 - **Universe.** A committed list pins the S&P 500 constituents plus
-  anchor sector ETFs; a batch ingest chunks the fetch and isolates
+  anchor ETFs (sector and broad-market); a batch ingest chunks the fetch and isolates
   per-symbol failures so a full-universe refresh never rides one giant
   download.
-- **A refresh is four steps in order, not one.** Bars, then the indicator
-  reference, then the materialised market-breadth series, then the freshness
-  manifest that lockstep-checks the three against each other. The breadth lane
-  carries a single implementation of its recurrences, and the manifest refuses
-  to call the tape coherent if any leg's as-of date disagrees.
+- **A refresh is one ordered chain, not one command.** Bars, then the
+  indicator reference, then the materialised market-breadth series, then the
+  smaller index and sub-daily lanes, and last the freshness manifest that
+  cross-checks them. The breadth lane carries a single implementation of its
+  recurrences, and the manifest refuses to call the tape coherent if the daily
+  bars, the indicator reference and the breadth series disagree on their as-of
+  date.
 - **A pinned tape of record.** A committed pin names the content hash of the
   tape a checkout is supposed to hold, so a kernel run on a lagging machine
   aborts instead of quietly proving something against older data. The pin moves
@@ -335,10 +341,11 @@ shared data file, not a code import.
 
 ## 3. Portfolio management (`trading/`)
 
-`trading/` runs three autonomous portfolio-management agents
+`trading/` holds three portfolio-management agents
 (aggressive / moderate / conservative) on a paper-trading broker. Each
 starts with the same notional capital and aims to beat the benchmark
-on a monthly basis. The discipline that governs them is the part worth
+on a monthly basis. Their scheduled routines have been switched off, by
+operator decision, since 2026-09-20; they can still be run by hand. The discipline that governs them is the part worth
 publishing — the agents themselves are private.
 
 ### Hard rules (the discipline)
@@ -364,6 +371,11 @@ publishing — the agents themselves are private.
    protective order is actually resting is a separate question answered by
    querying the broker, and the two are never conflated. A verification that
    cannot see the whole order tree returns *unknown* rather than a breach.
+8. **The risk policy changes only at the monthly retrospective,** with the
+   change justified in writing.
+9. **Concentration caps gate a proposed ticket.** A held position can drift
+   through its cap on price alone, so the close re-validates the book and
+   reports a breach for the next session — it reports, it does not cure.
 
 That seventh rule is stated in that shape because both halves of it were
 learned the expensive way, and the honest version of the story is in
@@ -407,15 +419,15 @@ set: `{ ts, o, h, l, c, v, adj_c }`. No `t` instead of `ts`, no missing
 
 Mapping is **shared data, not shared code**: a Parquet file keyed by
 symbol carries the canonical GICS hierarchy. The eleven GICS long-form
-sector names are the only accepted strings; abbreviations do not parse.
+sector names are the canonical strings; portfolio forms accept nothing else.
 Both the analyzer and the kernel read it through thin loaders; neither
 writes it. A sector-cap claim like "max 25% Information Technology" is a
 Lean `Prop` with a structured witness, not a spreadsheet count.
 
 ### Language split
 
-TypeScript for the market-inspection extension; Python for the
-portfolio agents and the kernel driver; Lean4 for the formal kernel. A
+TypeScript for the market-inspection viewer, with Python for its ingest and
+tape scripts; Python for the portfolio agents and the kernel driver; Lean4 for the formal kernel. A
 Python microservice is allowed as a numerics escape hatch (the TA-Lib
 reference). The surfaces never reach across: the trading Python does
 not import the analyzing TypeScript, and neither imports the kernel's
@@ -429,8 +441,8 @@ The five hand-built frameworks are the **golden reference** for a larger
 program: a kernel-checked encoding of trading signals across the whole
 S&P 500 universe, produced redundantly by independent agent teams along
 several orthogonal **signal-family** axes, then reconciled. Cross-axis
-agreement, proved in the kernel via Bridge lemmas, is the correctness
-signal — and it coincides with the practitioner's **confluence** heuristic
+agreement, checked in the kernel by bridge lemmas that discharge under declared
+correspondences, is the correctness signal — and it coincides with the practitioner's **confluence** heuristic
 (independent indicator families agreeing). The slice unit is the
 `(GICS sector, axis)` cell. This mirrors the full-U.S.-Code program on the
 legal side ([`qnarre-public`](https://github.com/quantapix/qnarre-public)).
@@ -438,7 +450,7 @@ legal side ([`qnarre-public`](https://github.com/quantapix/qnarre-public)).
 **Tier language on this page is withdrawn, and the re-verification that would
 have restored it did not.** Cross-axis *agreement* is what promotes a name to
 the top confluence tier, and in July 2026 our own adversarial review lane found
-leak channels in the agreement oracle. A blind re-slice of the names still
+leak channels in the agreement oracle. A re-slice of the names still
 eligible on that tape then completed and **reproduced no top-tier result**.
 Every agreement-derived tier claim below is dated pre-correction and remains
 withdrawn; the mechanical facts — what is encoded, and whether it elaborates
@@ -447,31 +459,28 @@ and the current posture, and the public status board's *withheld* outranks any
 number on this page.
 
 The GICS universe is fully enumerated (the full eleven-sector membership),
-and the program now runs end-to-end through promotion: the shared predicate
-library has grown wave-over-wave to 34 collapse-bridged predicates — among
-them a complete structural options-book cluster (per-leg allow-list,
-naked-short exclusion, debit-only, bounded max loss) proved equivalent
-across sectors under sorry-free bridges — and the first per-sector slice
+and the program runs end-to-end through promotion: the shared predicate
+library holds 34 predicates, unchanged since June 2026 — among them a
+structural options-book cluster (per-leg allow-list, naked-short exclusion,
+debit-only, bounded max loss) — whose collapse bridges were produced by
+pre-correction waves, and the first per-sector slice
 (Real Estate) is committed into the kernel library as an explicit build
 root. The default run-set carries seven axes (five core signal families
-plus instrument-risk and tradability/liquidity). A structural invariant
-held exactly as designed: a single-sector wave can never reach the top
-confluence tier, because only a subset of the axes are directional and the
-cross-section axis stays provisional until a cross-sector pass — the first
-top-tier promotion waited until a cross-sector reconciliation confirmed
-sector leadership as the third independent directional axis.
+plus instrument-risk and tradability/liquidity). Single-sector waves have so
+far always landed below the top confluence tier: only a subset of the axes are
+directional, and the cross-section axis is treated as provisional until a
+cross-sector pass.
 
 A sixth **Debate** framework formalizes the bull-vs-bear gate itself.
 `admissible_long` is a structure with no constructor omitting any field, so
 it requires the bull confluence claim, the kernel directional accept, a
 defined-risk-clean check, and the negation of *every* bear disqualifier.
-"Veto, not a vote" becomes a type-level property. The first kernel run of it
-correctly **refuse-closed** an inadmissible candidate (no `sorry`,
-`allowed = false`). In the same wave the strongest-trending candidate on the
-board, a semiconductor name, was refuse-closed by the volatility veto on a
-~47% historical drawdown; a later wave refuse-closed a hotel REIT on a *weak*
-volume-divergence veto. A weak veto still blocks — veto, not a vote,
-exercised on both branches.
+"Veto, not a vote" becomes a type-level property. Its first kernel runs
+**refuse-closed** inadmissible candidates (no `sorry`, `allowed = false`), on a
+strong veto in one case and a weak one in another. A weak veto still blocks.
+Those runs predate the July correction; an earlier version of this paragraph
+described the refused candidates closely enough to identify them, and that
+description has been removed.
 
 Targeting a wave is now a deterministic three-stage filter that runs before any
 kernel or model work — pure indicator and relative-strength arithmetic over the
@@ -488,37 +497,35 @@ full symbol store:
    top-tier gate — confluence alone does not promote a name when the veto fires.
 
 A standing frontier view joins all three stages into one watch-list, labelling
-each candidate by its binding gate (eligible / near-miss / rotation-gated /
-veto-killed / promoted).
+each candidate by its binding gate (eligible / near-miss / laggard-gated /
+rotation-gated / veto-killed / promoted).
 
-The program now has promoted citizens across **four** sectors — real estate,
-industrials, utilities, and financials — each reconciled sorry-free. Counting
-only committed kernel encodings (the golden calibration portfolios are
-scaffolding, not universe members), the encoded share of the ~526-symbol
-universe is on the order of **1.9%**, every encoding sorry-free.
+As of 2026-10-04 the program has encoded symbols in **five** sectors — real
+estate, industrials, utilities, financials and health care. Counting only
+committed kernel encodings (the golden calibration portfolios are scaffolding,
+not universe members), the encoded share of the ~526-symbol universe is about
+**2%**, none depending on `sorry` at the last recorded check.
 
-The newest sector landing is a worked instance of the discipline, not a call on
-any name: the first financials encoding cleared the trend-and-momentum
-confluence and the defined-risk volatility veto, yet the kernel **held it below
-the top tier** — its sector was lagging the benchmark on relative strength (so no
-third independent directional axis was available) and a live volume-divergence
-signal was present. Confluence plus a clean volatility veto is necessary but not
-sufficient; the cross-section axis stays provisional until a cross-sector pass,
-and a live bear signal keeps a name out of the top tier. A refusal-to-promote is
-a correct outcome, not a gap. The full-universe scale-out remains gated on a
-separate programmatic lane, paused pending a provider-plan change; the topology
-is proven and now has citizens in several sectors.
+The newest sector landing, on 2026-08-22, is a worked instance of the
+discipline, not a call on any name. It cleared the deterministic pre-filter and
+was still held one tier below the top, because its directional bridges were
+conditioned on evidence gaps. Clearing the filter is necessary and not
+sufficient; a refusal-to-promote is a correct outcome, not a gap. The
+full-universe scale-out remains gated on a separate programmatic lane, which is
+parked with no planned resumption date.
 
-The most recent multi-sector wave illustrates the gate rather than the
+The 2026-07-31 multi-sector wave illustrates the gate rather than the
 numerator. It ran the full pipeline across four sectors, every cell elaborated,
-every mechanical gate passed — and **nothing was promoted.** Its blindness
-certification came back a *breach* verdict, and the verdict was frozen as a
-breach rather than argued down, even though the substantive findings measured
-zero information disclosure. The wave is held in its sandbox at the operator
-gate, its evidence bundle archived, and the encoded census below is unchanged
-by it. Freezing an inconvenient verdict before reacting to it is the only order
-of operations that keeps a certification meaningful; a wave whose cert was
-adjusted after the fact would be evidence of nothing.
+every gate that had something to check passed — and **nothing was promoted.**
+Its blindness certification came back a *breach* verdict and was frozen as a
+breach rather than argued down. The finding at the time covered the shared
+kernel file, which only the licensed reconciler touched. A second channel found
+later did reach the blind cells: the per-axis briefings every cell is required
+to read named the reference judgments. Those briefings have been scrubbed, the
+scan that missed them now reads every required document, and the wave stays
+unpromoted. Freezing an inconvenient verdict before reacting to it is the only
+order of operations that keeps a certification meaningful; a wave whose
+certificate was adjusted after the fact would be evidence of nothing.
 
 ## What this repo is not
 
@@ -528,16 +535,17 @@ adjusted after the fact would be evidence of nothing.
   paper only.
 - **Not a chat surface.** Predicate sub-agents are scoped, audited, and
   short-lived.
-- **Not a private-PII surface.** The hosted service accepts only
-  redacted portfolios. No real account numbers, real names, or private
-  metadata ever flow to the server or to any LLM.
+- **Not a private-PII surface.** The hosted service accepts no user
+  portfolio at all today: it replays three committed, synthetic examples. No
+  real account numbers, real names, or private metadata flow to the server or
+  to any LLM.
 
 ## Cadence
 
-Refreshed weekly from the private working tree. Predicate rewrites,
-framework extensions, indicator additions, PM-discipline changes, and
-kernel-shape changes are committed as ordinary diffs — the commit log
-is the change record. See [`STATUS.md`](./STATUS.md) for the current
+Refreshed from the private working tree, and only when a financial sign-off
+clears the new text — so this repository can lag the weekly cadence of its
+siblings, and between August and October 2026 it did. Each refresh is an
+ordinary diff; the commit log is the change record. See [`STATUS.md`](./STATUS.md) for the current
 release-narrative snapshot.
 
 Authored by a sole developer working with an AI assistant (Claude Code) under written CLAUDE.md contracts — methodology in [qagents-public](https://github.com/quantapix/qagents-public).

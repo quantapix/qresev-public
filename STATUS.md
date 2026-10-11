@@ -1,7 +1,10 @@
 # qresev-public — status
 
-_Snapshot: 2026-08-07. Refreshed weekly (Fridays) during the
-2026-06-01 → 2026-12-01 drive window._
+_Snapshot: 2026-10-04. The previous snapshot was 2026-08-07. This page changes
+only when a financial sign-off clears the new text, so it can lag the weekly
+refresh the other repositories in the organisation get; between those two dates
+it did, and several statements here went stale. They are corrected below and
+dated where the date matters._
 
 This is the release-narrative status of the financial-domain slice: what
 has landed, where each of the three surfaces stands, and what is next. It
@@ -14,7 +17,7 @@ and two diagnoses withdrawn after being re-checked against the code rather than
 re-read from the note that asserted them. Those are the findings worth
 publishing; the parts that merely worked are one line each.
 
-## Correction — 2026-07-14, and the re-verification has now answered
+## Correction — 2026-07-14, the re-verification's answer, and what was found after it
 
 On 2026-07-14 our own adversarial review lane found leak channels in the
 cross-axis **agreement oracle** — the mechanism that scores the top-tier
@@ -25,19 +28,32 @@ minted before that date are not established as blind.
 The correction stands, and it now has an outcome:
 
 - The **"seven top-tier names"** figure and the "re-tiered up on a fresh blind
-  re-slice" claim remain **withdrawn**. The public status board reports these
-  tiers as *withheld*, not as a number.
-- **The blind re-slice completed on 2026-07-15 and did not re-establish those
-  figures.** Of the names still eligible on that tape, it reproduced **no
-  top-tier result** — with zero bear vetoes, the cleanest possible
-  non-promotion. Two further blind re-slices under the corrected fan-out
-  contracts, on 2026-07-19 and 2026-07-21, each landed below the top tier as
-  well. The count of top-tier names re-earned under corrected contracts is
-  **zero**, and that is what the board publishes.
-- **The known leak-channel count went from four to six**, not because two new
-  breaches happened but because two more *ways to leak* were identified and
-  written into the contracts: a shared kernel namespace, and a reconciler's
-  access to prior adjudications. Bounding the channel ("check a name, don't
+  re-slice" claim remain **withdrawn**. The public status board shows the tier
+  as *withheld* and states the withdrawal, not a number.
+- **A re-slice under the corrected contracts completed on 2026-07-15 and did
+  not re-establish those figures.** Of the names still eligible on that tape,
+  it reproduced **no top-tier result**. Two further re-slices under the
+  corrected fan-out contracts, on 2026-07-19 and 2026-07-21, each landed below
+  the top tier as well. The count of top-tier names re-earned under corrected
+  contracts is **zero**, and it was still zero on 2026-10-04.
+- **Two things an earlier version of this page said about those re-slices were
+  wrong, and a third needs a caveat.** It called the first one "the cleanest
+  possible non-promotion, with zero bear vetoes". That is false: on both names
+  the limiting factor was a fired momentum-overextension disqualifier. It
+  called all three *blind*. The first was later graded a breach on mechanism,
+  and a channel found in September was open when all three ran: the briefings
+  every cell is required to read named the reference judgments. A required
+  input is graded by no blindness check, so none of the three is called blind
+  here any longer. The direction matters and is the caveat: a leak toward the
+  reference answers can only inflate agreement, and none of the three reached
+  it. The negative result stands; the adjective does not.
+- **The list of known leak channels has kept growing**, not because new
+  breaches keep happening but because more *ways to leak* keep being
+  identified and written into the contracts. This page once reported the count
+  going from four to six — a shared kernel namespace, and a reconciler's access
+  to prior adjudications. More have been named since, the latest on 2026-09-26,
+  and at least one has no instrument yet and is recorded as ungraded. The count
+  is left out on purpose: it moves. Bounding the channel ("check a name, don't
   list the directory") turned out not to bound the *breadth* — a cell may
   check only names its own brief hands it, and may not enumerate, roster, glob
   or walk the environment by any mechanism. Publishing a rising count of known
@@ -55,14 +71,17 @@ The correction stands, and it now has an outcome:
   that did not happen — only two names were still eligible on that tape).
   Under-claiming the scope of a negative finding is the right direction of
   error here.
-- **The corrected number is still not published, and not for a good reason —
-  for an honest one.** The internal rollup schema has no representation for
-  *encoded and sound with agreement tier withdrawn*, so it still derives the
-  old count. Publishing a public zero against an internal seven would trade one
-  honest gap for two inconsistent numbers. The number rides a schema migration
-  and a second review; the withdrawal ships now.
-- **Unaffected: kernel soundness and the encoded census.** Every `lake build`
-  is green and every committed encoding is `sorry`-free. How many symbols are
+- **The corrected number is still not on the board, for a different reason
+  than before.** The reason this page used to give — the internal rollup could
+  not represent *encoded and sound with agreement tier withdrawn* — stopped
+  being true on 2026-08-21: the rollup now records the withdrawal and derives
+  zero blind-agreement top-tier names. The numeric figure was then re-scanned
+  for the financial sign-off on 2026-10-04 and refused as a set, because the
+  counts below the top tier still include rows minted before the correction.
+  The board keeps the withdrawal string.
+- **Unaffected: kernel soundness and the encoded census.** As of the last
+  recorded build (2026-09-22) and axiom-closure check (2026-09-29), the kernel
+  libraries build and no committed encoding depends on `sorry`. How many symbols are
   encoded is a mechanical count, not an agreement figure. The
   accepting-and-refusing gate behaviour and the defined-risk options refusal
   are kernel facts — they stand.
@@ -72,13 +91,19 @@ not because the earlier numbers were right all along.
 
 ## Overall
 
-**Pre-beta — endpoint deployed, beta not yet declared.** The hosted
-evaluator at `qresev.quantapix.com` is deployed and reachable: the app
-shell and its API answer publicly, and the worked example streams a kernel
-verdict back that matches the committed ground truth. The drive's
-early-beta opening — the hosted verification-service deliverable — remains
-scheduled for Month 3+ of the window. Until it is declared, the deployment
-is an engineering surface, not the launch deliverable.
+**Pre-beta — endpoint deployed, beta not declared, and no date is set for it.**
+The hosted evaluator at `qresev.quantapix.com` is reachable, and its API answers
+on a separate host. The API serves the committed report for each of three worked
+examples and will replay one through the kernel on request.
+
+The app page does not show that yet, and an earlier version of this paragraph
+said it did. The page's stream panel renders a fixed illustrative trace; it is
+not connected to the API's event stream. Its report panel asks the page's own
+host for the report, and the API lives on a different one, so on the hosted page
+that request fails. The per-run pages are built from the committed results and
+do render them. An earlier dated beta target passed unmet and has been
+withdrawn; none replaces it. Until a beta is declared, the deployment is an
+engineering surface, not the launch deliverable.
 
 ## Formal evaluator (`accounting/`)
 
@@ -86,23 +111,21 @@ is an engineering surface, not the launch deliverable.
   The five golden frameworks (Trend, Momentum, OptionsRisk, Sector, Drawdown)
   are joined by Regime, ExitDiscipline and Hedging under a chartered expansion;
   the bull-vs-bear gate and the new factor decomposition are program
-  frameworks rather than portfolio judgments. All elaborate under `lake build`,
-  and the spec battery is green.
+  frameworks rather than portfolio judgments. All elaborated at the last
+  recorded build, and the spec battery was last recorded green on 2026-10-01.
 - **A framework with no model in the loop.** The factor decomposition is the
   first kernel judgment whose facts are lifted deterministically from a fit
   report rather than decided by a model. The kernel checks the exact
   quantize-then-residualize identity as integer arithmetic and refuses on a
-  length or day-count mismatch; the emitter is statically free of model calls
+  length or day-count mismatch; the emitter contains no model call
   and fails closed if the report's content hash is not the one it was told to
   read. Method detail in the [README](./README.md).
-- **Hedging: eight of eleven predicates in, three recorded as bound.** Both
-  top-level judgments elaborate as whole structures with no omittable field.
-  The remaining three are **bound on a portfolio-schema extension**, not on
-  kernel work, and are recorded as blocked rather than stubbed — a predicate
-  that cannot yet read its evidence does not get a placeholder. The schema
-  extension itself has now landed on the producer side; what is still missing
-  is the wiring that writes it, which is stated below rather than counted as
-  done.
+- **Hedging: the whole chartered predicate roster is in the kernel as of
+  2026-08-22.** Both top-level judgments elaborate as whole structures with no
+  omittable field. The last three predicates had been recorded as blocked
+  rather than stubbed — a predicate that cannot yet read its evidence does not
+  get a placeholder — and landed once the fills ledger they read existed. They
+  abstain on a position that carries no ledger facts.
 - **The evidence tape is pinned into every run, and now pinned across
   machines.** Three gates sit between the kernel program and its market-data
   ground truth: a **corpus pin** (each archived run records the content hash of
@@ -120,24 +143,34 @@ is an engineering surface, not the launch deliverable.
   instead the single data-access boundary stamps every read, and the archiver
   asks whether that set of stamps is split. A cell cannot forget to be honest
   about something it never touches.
-- **A wave ran, passed every mechanical gate, and was not promoted.** The
-  window's multi-sector wave covered four sectors, every cell elaborated, and
-  the trust, coherence, oracle-guard, parity and theorem-attestation gates all
-  passed. Its **blindness certification came back a breach verdict, and was
-  frozen as a breach** — not downgraded — even though the substantive findings
-  measured **zero** information disclosure: the one shared kernel file that was
-  touched was touched by exactly one agent, the licensed cross-sector
-  reconciler whose contract requires it, and no blind cell read it. The wave is
-  held in its sandbox at the operator gate with its evidence bundle archived,
-  and the encoded census is unchanged by it.
+- **A wave ran, cleared the gates that could look, and was not promoted.** The
+  2026-07-31 multi-sector wave covered four sectors, every cell elaborated, and
+  the coherence, oracle-guard, parity and theorem-attestation gates passed. One
+  further gate recorded as a pass at the time has since been restated as
+  *nothing to check*: it ran over an empty population. Its **blindness
+  certification came back a breach verdict, and was frozen as a breach** — not
+  downgraded.
+
+  An earlier version of this bullet added that the findings measured zero
+  information disclosure. That was the reading on the channels the auditor
+  graded then: the one shared kernel file that was touched was touched only by
+  the licensed cross-sector reconciler whose contract requires it. The zero
+  does not survive. A later re-grade convicted more cells on mechanism, and two
+  channels found afterwards — context injected into every cell, and the
+  required briefings — were never graded for this wave; blind-cell outputs
+  from it do name the reference judgments those briefings carried. The wave was
+  never promoted, its archive and evidence bundle are retained, and nothing in
+  the encoded census came from it.
 
   The order of operations is the point. The verdict is frozen *before* anyone
   reacts to the auditor's non-zero exit, because an unfrozen breach ages off
   with the transcripts it rests on — that is precisely how one earlier wave
   became permanently un-certifiable. A certification adjusted after the fact
   would be evidence of nothing.
-- **Five defects hit during that wave; a sixth was a misdiagnosis and is
-  recorded as one.** Publishing the list because each generalises:
+- **Five defects hit during that wave, and a sixth report first recorded as a
+  misdiagnosis turned out to be a defect too.** The list is as of mid-August
+  2026 and more were found on the same wave afterwards. Publishing it because
+  each generalises:
   1. An archive step ran the trust gate **unscoped**, so one permanently-stale
      symbol that was *outside the run's scope* aborted every archive — and
      reported the failure under the wrong gate's banner while that gate printed
@@ -156,16 +189,21 @@ is an engineering surface, not the launch deliverable.
   5. Build-configuration comments carried **prior tier verdicts, the encoded
      symbol, the directional call and fired flags with values** — a surface
      every reconciler must read. Three reconcilers hit it and self-disclosed;
-     all three then diverged *downward*, which is why the wave survives as
-     anti-echo evidence rather than being void. Scrubbed to ordinal, date,
+     all three then diverged *downward*, which is why the wave was kept as
+     evidence rather than voided. Scrubbed to ordinal, date,
      sector and closure shape; waves are now cited by date, because three
      historical run names encoded the verdict in the name itself.
 
-  The sixth was not a defect: four cells believed a data-reading flag narrowed
-  their view of the tape when it is additive by design. It is recorded as a
-  misdiagnosis so the next session does not "fix" working code — the shared raw
-  tape vocabulary every axis reads is not a blindness channel.
-- **Two ways a green build proves nothing, both now closed.** A Lean option
+  The sixth: four cells believed a data-reading flag narrowed their view of
+  the tape. It was additive, and this page recorded their report as a
+  misdiagnosis so that nobody would "fix" working code. That was reversed on
+  2026-08-22. A flag that only widens exposes other signal families' columns to
+  every single-axis cell, and it now narrows as well.
+- **Ways a green build proves nothing: two were known in early August, and at
+  least three more had been found by late September.** Each has a gate or a
+  preflight now; none is described here as closed for good, because the earlier
+  version of this bullet said "both now closed" two days before the third was
+  found. A Lean option
   left on would silently bind an unqualified type as a phantom implicit
   variable: the module builds green while its axioms range over an invented
   type, and a bridge between two phantom-typed composites **discharges
@@ -176,7 +214,11 @@ is an engineering surface, not the launch deliverable.
   hand-maintained roster cannot reach an unrooted file by construction; the
   scan is now tree-derived, and a witness proof-of-fires the width by planting
   an incomplete proof in an unimported module and confirming the roster-scoped
-  arm passes it while the tree arm rejects it.
+  arm passes it while the tree arm rejects it. The later three: the same
+  unrooted hole in the worked-examples library, where fewer than half the
+  example proofs had been rooted; a second vacuity mechanism that no compiler
+  option prevents; and an attestation step that could read stale build output
+  on a tree that no longer built.
 - **A guard that cannot be observed failing is not a guard.** A new guard's
   test passed green against a guard that never ran — the assertion matched text
   the tool emits on *any* misuse, so it proved nothing. The rule now is to
@@ -187,7 +229,8 @@ is an engineering surface, not the launch deliverable.
   sentinel works or the client underneath is simply dead; and arming an
   aggregator does not arm its members — a rostered battery sat unguarded when
   invoked directly, and another suite sat in no aggregated run at all for a
-  week. The aggregator's roster is now derived from the tree.
+  week. The aggregator's roster is now derived from the tree, with one explicit
+  exception.
 - **Lost evidence is declared, and a declaration is not a shrug.** Archived
   waves are paired against the durable coverage history, restricted to rows
   that actually adjudicated something — pairing over *every* row would red every
@@ -211,44 +254,52 @@ is an engineering surface, not the launch deliverable.
   after any change to the grader is to re-run the whole invocation rather than
   trust the verdict on file, and a verdict that moves is superseded **in the
   open**, with the prior certificate retained beside the new one.
-- **Refusing to run is a reported outcome.** The deterministic pre-filter that
-  targets a run — pure indicator and relative-strength arithmetic, no model
-  calls — has returned zero eligible candidates on recent tapes, so no run was
-  launched and no model spend was incurred. Those refusals are first-class rows
-  in the program's history rather than prose, so the axis does not read as idle
-  when it is in fact correctly holding. A monitoring alarm for tape staleness
-  now exists alongside it, and is **dark** until it is enabled on the machine
-  that would fire it — recorded as dark rather than described as running.
+- **Refusing to run is a reported outcome, and since 2026-08-22 it is no
+  longer the end of the session.** The deterministic pre-filter that targets a
+  run — pure indicator and relative-strength arithmetic, no model calls — still
+  usually returns zero top-tier-eligible candidates; the latest recorded read,
+  on 2026-09-30, did. Those reads are first-class rows in the program's history
+  rather than prose. What changed is what follows one: a zero read now routes
+  to a wave that tries to *refute* a candidate, or to a depth increment on an
+  existing framework, and several such waves have run. The earlier version of
+  this bullet said no run was launched and no model spend incurred, which was
+  true when written and is not now. The tape-staleness alarm it described as
+  dark has been firing on its host since 2026-08-18.
 
 ## Axiomatize-trading program
 
-- **Encoded census: 10 symbols across four sectors**, each committed into
-  the kernel library as an explicit build root, each `sorry`-free, with the
-  golden reference untouched. Counting only committed universe encodings
-  (the golden calibration portfolios are scaffolding, not universe
-  members), that is on the order of **1.9%** of the ~526-symbol GICS
-  universe. This is a mechanical census, unaffected by the agreement
-  correction above and unchanged by the held wave.
+- **Encoded census, as of 2026-10-04: 11 symbols across five sectors** (health
+  care joined on 2026-08-22), each encoded in a sector module that is an
+  explicit build root, none depending on `sorry` at the last recorded check,
+  with the golden reference untouched. Counting only committed universe
+  encodings (the golden calibration portfolios are scaffolding, not universe
+  members), that is about **2%** of the ~526-symbol GICS universe. This is a
+  mechanical census, unaffected by the agreement correction above and unchanged
+  by the unpromoted wave.
 - **Tier counts: withheld.** See the correction. Where tiers are reported at
   all, they are derived from per-symbol enumeration and never carried as a
   standalone number.
-- **Three blind re-slices, none promoting.** Each ran the full pipeline —
-  seven independent signal-family cells, a per-sector reconciliation, a
-  cross-sector pass, and the admissibility gate — and each landed below the top
-  tier because only two independent directional axes were confirmed at
-  single-sector scope; the cross-section axis stays provisional until a
-  cross-sector pass. All had **zero bear vetoes**. In each, the gate correctly
-  **refuse-closed** with no incomplete proof: the admissibility structure is
-  unconstructable without the top-tier confluence claim. One of the names is the
-  program's original *accepting* exemplar, and it now correctly refuses. That is
-  the anti-echo property working — a re-verification that could only ever
-  confirm the prior answer would be measuring nothing.
+- **Three re-slices under the corrected contracts, none promoting.** Each ran
+  seven independent signal-family cells and a per-sector reconciliation; the
+  two later ones also ran the cross-sector pass and the admissibility gate. The
+  first was held below the top tier by a fired momentum disqualifier on each
+  name. The two later, single-sector ones were held there because only two
+  independent directional axes were confirmed at that scope — the cross-section
+  axis stays provisional until a cross-sector pass — and fired no bear
+  disqualifier. In the two where the gate ran, it **refuse-closed** with no
+  incomplete proof: the admissibility structure is unconstructable without the
+  top-tier confluence claim. One of the names is the program's original
+  *accepting* exemplar, and it now refuses. A re-verification that could only
+  ever confirm the prior answer would be measuring nothing; this one did not
+  confirm it. See the correction above for why these are no longer called
+  blind.
 - **The oracle caught a real defect in-flight.** In one re-slice, a
   reconciliation build-guard caught a corroborator cell reporting success on a
   claim that had discharged *vacuously*. The cell was tier-neutral, so the
   verdict did not move — but the guard, not a human review, is what found it.
-- **Two genuine mechanism violations were found on re-adjudication, and the
-  earlier convictions were withdrawn.** Re-running the corrected grader over
+- **Two genuine mechanism violations were found on the 2026-07-30
+  re-adjudication, and the earlier convictions were withdrawn.** A later
+  re-grade of another wave convicted more cells on the same mechanism class. Re-running the corrected grader over
   older waves moved verdicts in both directions. A batch of earlier
   "convictions" **evaporated**: they had graded the tool rather than the
   content, and that wave downgrades wholesale to review. Two real blind-cell
@@ -261,18 +312,20 @@ is an engineering surface, not the launch deliverable.
   re-graded at all: its evidence aged off, so its frozen finding is permanent
   and bounded, and anything resting on it requires a fresh blind wave rather
   than a re-score.
-- **Sharing across axes is measured, not assumed.** A shared predicate library
-  backs the per-sector slices; each new run reports how many of its candidate
-  predicates re-witness existing shared cores versus mint new ones, so
-  consolidation is observable rather than claimed.
+- **Sharing across axes is not being measured at present.** A shared predicate
+  library backs the per-sector slices, and it has not grown since June 2026.
+  Recent waves are single-sector and skip the cross-sector pass, so no
+  consolidation figure is reported for them; the earlier claim here that each
+  new run reports one was not true of those waves.
 
-Full-universe scale-out remains gated on a separate programmatic lane.
+Full-universe scale-out remains gated on a separate programmatic lane, which is
+parked with no planned resumption date.
 
 ## Market inspection (`analyzing/`)
 
 - **The local inspection surface is feature-complete for its first workflow
-  set,** and gained optional factor-decomposition overlays this window at the
-  symbol, cohort and ribbon scopes. It runs on loopback only, is absent from
+  set,** and carries optional factor-decomposition overlays at the symbol,
+  cohort and ribbon scopes. It runs on loopback only, is absent from
   every deploy lane, and renders **ground-truth tape only** — no predicate
   verdict, framework judgment, or proof node appears in an inspection panel.
   Anything exported off it becomes a financial-clearance subject.
@@ -282,15 +335,21 @@ Full-universe scale-out remains gated on a separate programmatic lane.
   are listed as excluded rather than silently composited. Books render
   separately and are never pooled. A book's beta reference lines render as
   **values only** — there is no in-band / out-of-band verdict word, because the
-  kernel predicate that would license one does not exist yet. And no
+  viewer carries no entry binding that word to a kernel predicate, and until it
+  does the surface shows the numbers and nothing else. And no
   fit-quality or confidence field crosses the overlay seam at all: a factor
   contribution is shown, the model's opinion of itself is not.
 - **Restatement classification is compositional.** A vendor refresh that
   changes historical values is decomposed into world-fact components —
-  split-like, dividend-like, volume-settlement, and residual — instead of a
-  single opinion word. Recent full refreshes came back with **zero unmodelled
-  residuals**, which is what licenses the claim that no new supplier-change
-  class needs naming. A refinement: rescale uniformity is judged over a
+  split-like, dividend-like, volume-settlement, frontier-settlement, and
+  residual — instead of a single opinion word. The fourth was added on
+  2026-08-25, and the earlier version of this bullet is why it is worth
+  stating: it reported zero unmodelled residuals and concluded that no new
+  class needed naming. After the refresh moved to run after the close, most of
+  each run's restatements were unmodelled — the vendor finalises a session's
+  open, high and low by the next day — until that class was named by ruling.
+  Since then residuals are a handful per run, not zero, and each is read as a
+  finding. A refinement: rescale uniformity is judged over a
   column's *changed* bars only. A corporate action rescales bars before its
   effective date, and mixing the unchanged tail into the ratio set had been
   mis-classing routine dividends as irregular.
@@ -307,17 +366,25 @@ Full-universe scale-out remains gated on a separate programmatic lane.
   landing on the same bar. A measurement that does not name what it failed to
   cover is an assertion wearing a number.
 - **History and membership are both monotone.** A refresh may add bars and may
-  restate them, but may never reduce the set of dates held for a symbol; a
-  vendor drop is refused, the file left byte-identical, and the run exits
-  non-zero rather than letting a downstream program rebase on a truncated
-  series. One symbol has been in that refused state since the guard was cut in
-  July 2026 — refused on **every** refresh since, byte-identical each time,
-  held on the record rather than repaired. A **second symbol entered the refused
-  state on 2026-08-06**: the vendor dropped bars we hold while adding newer
-  ones, which is plausibly structural rather than a flap given a pending
-  corporate action on that name. Its disposition is explicitly open. If the
-  security's listing has ended, the correct answer is retirement-in-place
-  through the universe lane, never a rewrite: splicing a pre-action series onto
+  restate them, but may never reduce the set of dates held for a symbol. How
+  that is enforced changed on 2026-08-18. A small vendor drop is now absorbed by
+  a union write: the bars we hold survive, the vendor's new bars land, and the
+  event is recorded at warning level. A larger loss is still refused and the
+  file left byte-identical, so a downstream program never rebases on a truncated
+  series. The scheduled run exits non-zero only when a refusal is new or has
+  changed.
+
+  The refused set is not fixed, and the earlier version of this bullet counted
+  it as one symbol and then two. It peaked at roughly a fifth of the universe in
+  mid-August 2026 — mostly an artifact of fetching before the session had
+  settled, cured by moving the run after the close and by the union write — and
+  stood at a handful on 2026-10-03. One symbol has not advanced since July 2026:
+  first refused, later simply unanswered by the vendor, its file unchanged, and
+  carried as a standing expected entry. A second, refused in early August, was
+  retired in place through the universe lane a few days later once the end of
+  its listing was confirmed; the held bars stay on disk and nothing was
+  rewritten. Retirement-in-place is the correct answer when a listing ends,
+  never a rewrite: splicing a pre-action series onto
   a post-action security fabricates price continuity and poisons every indicator
   computed over it. Accepting a genuine reset is per-symbol and on the record,
   or the tape does not change. Universe membership is monotone too, and the
@@ -325,38 +392,46 @@ Full-universe scale-out remains gated on a separate programmatic lane.
   retired-and-still-held set — a per-symbol intersection, never a tolerance — so
   a retirement and a genuine silent drop in the same refresh do not cancel each
   other out.
-- **The planned automatic alarm for that refusal has been redesigned before
-  shipping, because the obvious version could not work.** The original
+- **The automatic alarm for that refusal shipped on 2026-08-09, in redesigned
+  form, because the obvious version could not work.** The original
   requirement was to surface the refusal exit code as a routine failure. That
   alarm would have shipped red on its first fire and every fire after, because a
   standing refusal *is* the steady state of this lane — and a channel that is
   always red cannot report the new regression the alarm exists to catch. The arm
-  must fire on a **diff against a recorded baseline** of expected-blocked
-  symbols: a symbol newly entering the refused set, or a refused symbol whose
-  signature changes. The second refused symbol above is exactly the event that
-  design exists to catch, and it was caught by a person rather than by the
-  alarm, which is the honest state of it.
+  fires on a **diff against a recorded baseline** of expected-blocked symbols: a
+  symbol newly entering the refused set, or a refused symbol whose signature
+  changes. The early-August refusal above is exactly the event that design
+  exists to catch; it predates the alarm and was caught by a person. Since the
+  alarm shipped, a newly refused symbol makes the run exit non-zero once and
+  then joins the baseline.
 - **A staleness gate was reading the wrong timestamp, on both sides.** A
   consumer-side freshness check compared against a field that a manifest
   regeneration could advance without any new data, which meant the cure for a
   staleness alarm was to regenerate the manifest — silently dropping the
   non-clean list the gate depended on and trading a false abort for a vacuous
-  gate. Both halves are now fixed: the check reads the build timestamp and
+  gate. Both halves are fixed: the check reads the build timestamp and
   falls back aloud for older manifests, an absent basis is a loud
   *unchecked* rather than a pass, and an unknown one aborts as
-  couldn't-look. The standing rule that survives: **never regenerate the
+  couldn't-look. A regeneration that loses its basis now marks the non-clean
+  list unknown rather than leaving it silently empty. The standing rule that
+  survives: **never regenerate the
   manifest to clear a staleness alarm.**
 - **Coverage status** surfaces through the framework's `/status` board —
   symbol count, indicator-reference count, GICS-mapping presence, and
   newest-bar freshness.
 
-**Next:** a backtest-summary surface; the expected-blocked baseline the
-refusal alarm needs; and the disposition of the newly refused symbol.
+**Next:** the first live end-of-day options-chain snapshot and its place in
+the schedule, and a watch on two vendor-side series that have stopped
+answering.
 
 ## Portfolio management (`trading/`)
 
-**Two coverage gates were green and wrong at the same time this window, and
-one of them caused real damage on a paper book.** Both are worth publishing in
+**The scheduled trading routines have been switched off, by operator
+decision, since 2026-09-20.** Nothing below is running on a schedule today. The mechanisms described stay in place for a re-arm, and the incidents
+are reported as what they were.
+
+**In early August 2026 two coverage gates were green and wrong at the same
+time, and one of them caused real damage on a paper book.** Both are worth publishing in
 full, because between them they cover the two ways a safety check fails.
 
 - **A gate asserted a breach it could not see.** A bracket order's protective
@@ -376,7 +451,7 @@ full, because between them they cover the two ways a safety check fails.
   exactly that. The stops had been resting the whole time; the duplicate
   submission cancelled them through the broker's one-cancels-other linkage,
   **permanently destroyed two take-profit legs, and opened the only naked
-  window that book has ever had** — about twenty-six seconds. The remedy text
+  window that book had had to that date** — about twenty-six seconds. The remedy text
   now names the hazard and says to stop and re-verify on a broker refusal;
   improvising around a refusal is the route the damage actually took. A false
   alarm whose prescribed response is destructive is worse than no alarm.
@@ -397,16 +472,26 @@ full, because between them they cover the two ways a safety check fails.
   spread from "same underlying, opposite sides" would **release** a coverage
   requirement on a guess, which is the one direction the rule forbids. Four
   regression tests, one written against the live book's exact shape.
-- **The schema for all this landed; the wiring did not, and that is stated
-  rather than counted.** A leg-pairing identifier minted at ticket time, a
-  signed net premium per option leg, and a per-book append-only premium ledger
-  are all in place. **Nothing yet writes the ledger on a real fill.** Until a
-  routine turns a fill into a ledger row and stamps the identifier onto the
-  positions it opens, the budget predicate has nothing to read and the collar
-  predicate sees a null identifier on every existing option position. The
-  backfill question is deliberately open, because the honest options are "leave
-  them null and let the predicates abstain" or "operator-attested pairing" —
-  never "infer", which is the reconstruction the identifier exists to prevent.
+- **The schema for all this landed on 2026-08-07 and the wiring followed on
+  2026-08-18.** A leg-pairing identifier minted at ticket time, a signed net
+  premium per option leg, and a per-book append-only premium ledger are in
+  place, and execution now records every option fill as a ledger row and stamps
+  the identifier onto the positions it opens. The earlier version of this
+  bullet said nothing wrote the ledger on a real fill; that stopped being true
+  eleven days after it was written. One book's ledger has real rows; the other
+  two have had no option fills. No share-covered short call has been written by
+  any book, so the collar path is still unexercised on live data.
+
+  The backfill question was ruled on 2026-08-09: positions that predate the
+  identifier stay null and the predicates abstain — never "infer", which is the
+  reconstruction the identifier exists to prevent. One such position was
+  nevertheless stamped retroactively by a routine a month later, shortly before
+  it closed. That is recorded here as a departure from the ruling, not as an
+  attested pairing. Nothing yet reconciles the ledger against open positions
+  either: in September a close whose rows were not written left a stale open
+  short leg on the ledger's projection for about twenty hours before
+  compensating rows corrected it.
+
   The ledger is also **never pruned at position close** (a pruned ledger serves
   everything and then fails once, about a year in, when the first year-long
   window needs a closed position) and a malformed row makes the reader **raise
@@ -427,8 +512,9 @@ full, because between them they cover the two ways a safety check fails.
   flight, and the incoming machine must fast-forward to the authoritative branch
   or refuse outright. A missed run is recoverable; a double run corrupts the
   book. We take the gap and make it loud. A same-machine half was added this
-  window: while an interactive session holds the write-lock, every scheduled
-  fire on that machine refuses and spends nothing, which also means a session
+  window: while an interactive session holds a project's write-lock, every
+  scheduled fire of that project on that machine refuses and spends nothing,
+  which also means a session
   left open across a trading day **darkens that day's chain** — a constraint to
   design the cutover around, not to discover at the open.
 - **Probes must import, not ask the packager.** A pre-flight check returned
@@ -451,12 +537,16 @@ full, because between them they cover the two ways a safety check fails.
   spend, leaving no closing section and no summary; the next morning caught the
   missing valuation mark and backfilled it, but nothing noticed the missing
   narrative — and the last step of the day, the one holding the cost figure in
-  its hand, declined to write and reported no problem. It now refuses loudly.
-  The cost itself is never lost; it is reconstructible from the logs. **The
+  its hand, declined to write and reported no problem. It now refuses loudly —
+  when it runs. The refusal sits inside the chain it grades, so days on which
+  the chain itself went dark were again unrecorded for a week, and a later
+  audit found sixteen gaps no detector had reported. A schedule-derived
+  completeness check has since been added; a detector that lives outside the
+  chain is still the open part. The cost itself is never lost; it is reconstructible from the logs. **The
   narrative is deliberately not backfilled**: a closing section written days
   later is not a contemporaneous record, and manufacturing one is the same
   failure class the session-calendar guard exists to prevent. Record the gap.
-- **Two of our own tracked diagnoses were withdrawn this window after being
+- **Two of our own tracked diagnoses were withdrawn in the summer of 2026 after being
   re-derived against the code.** One asserted a blocker that had already been
   cleared and a dependency count that the graph tool did not produce; another
   had quoted a machine-readable clause verbatim inside prose to narrate that the
@@ -466,24 +556,27 @@ full, because between them they cover the two ways a safety check fails.
   than quietly rewritten. Re-reading the note that makes a claim is not
   re-verifying the claim.
 
-**Next:** wire fills into the premium ledger at execution time and put the
-backfill question to the operator; finish the write-fence and session-calendar
-migration for the remaining routine producers.
+**Next:** reconcile the premium ledger against open positions, and give each
+routine a named artifact contract so a run that exits cleanly having written
+nothing is detected. Both wait on the routines being re-armed.
 
 ## How to verify
 
-- Clone, `lake build`, and watch the kernel either accept or reject the
-  worked examples.
-- Every indicator predicate's authority resolves to a TA-Lib reference.
-- Replay the worked example at the deployed endpoint and read the streamed
-  trace back. Freeform portfolio submission opens with the beta; nothing
-  un-redacted will be accepted.
+- This repository carries prose only. The kernel source is not published
+  here, so there is nothing to build from a clone, and an earlier version of
+  this list said otherwise.
+- Every indicator predicate's authority resolves to a column of the committed
+  indicator reference, with TA-Lib parity where TA-Lib defines the indicator.
+- The API host serves the committed report for each worked example and will
+  replay one on request. The app page's stream panel is illustrative and is not
+  that replay. Freeform portfolio submission is not open; nothing un-redacted
+  will be accepted when it is.
 - Where this page reports a tier, check it against the status board first —
   during the correction the board's *withheld* is the authority, and no
   number on this page outranks it.
 - Where this page reports a count, prefer the mechanical ones. The encoded
-  census is a count of committed build roots. Anything derived from
+  census is a count of symbols with a committed, rooted encoding. Anything derived from
   cross-axis agreement is withdrawn, and anything derived from how many times
   a scheduled job has done the same thing is machine-local and therefore a
-  partial view — which is why the standing refusal above is stated as
-  "every refresh since" rather than as an ordinal.
+  partial view — which is why the standing refusals above are stated by date
+  rather than by count.
